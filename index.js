@@ -1,40 +1,40 @@
-const puppeteer = require("puppeteer");
-const url = "https://www.zoho.com/";
-const output = "js.pdf";
+// const puppeteer = require("puppeteer");
+// const url = "https://www.zoho.com/";
+// const output = "js.pdf";
 
-(async () => {
-  const customArgs = [
-    `--start-maximized`,
-    `--load-extension=C:/Users/lenovo/AppData/Local/Google/Chrome/User Data/Profile 9/Extensions/mcbpblocgmgfnpjjppndjkmgjaogfceg/1.11.25_0`,
-  ];
-  const browser = await puppeteer.launch({
-    defaultViewport: null,
-    headless: false,
-    executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
-    ignoreDefaultArgs: ["--disable-extensions", "--enable-automation"],
-    args: customArgs,
-  });
-  const backgroundPageTarget = await browser.waitForTarget(
-    (target) => target.type() === "background_page"
-  );
-  const backgroundPage = await backgroundPageTarget.page()
+// (async () => {
+//   const customArgs = [
+//     `--start-maximized`,
+//     `--load-extension=C:/Users/lenovo/AppData/Local/Google/Chrome/User Data/Profile 9/Extensions/mcbpblocgmgfnpjjppndjkmgjaogfceg/1.11.25_0`,
+//   ];
+//   const browser = await puppeteer.launch({
+//     defaultViewport: null,
+//     headless: false,
+//     executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+//     ignoreDefaultArgs: ["--disable-extensions", "--enable-automation"],
+//     args: customArgs,
+//   });
+//   const backgroundPageTarget = await browser.waitForTarget(
+//     (target) => target.type() === "background_page"
+//   );
+//   const backgroundPage = await backgroundPageTarget.page()
 
-  const page = await browser.newPage();
-  await page.setDefaultNavigationTimeout(0);
-  await page.goto(url, {
-    waitUntil: "networkidle0",
-  });
-  await page.waitForTimeout(2000);
-  await backgroundPage.evaluate(() => {
-    chrome.tabs.query({ active: true }, tabs => {
-      chrome.browserAction.onClicked.dispatch(tabs[0]);
-    })
-  })
-  await page.waitForTimeout(15000);
+//   const page = await browser.newPage();
+//   await page.setDefaultNavigationTimeout(0);
+//   await page.goto(url, {
+//     waitUntil: "networkidle0",
+//   });
+//   await page.waitForTimeout(2000);
+//   await backgroundPage.evaluate(() => {
+//     chrome.tabs.query({ active: true }, tabs => {
+//       chrome.browserAction.onClicked.dispatch(tabs[0]);
+//     })
+//   })
+//   await page.waitForTimeout(15000);
 
-  await page.close();
-  await browser.close();
-})();
+//   await page.close();
+//   await browser.close();
+// })();
 
 //*************************************************************************************************************** */
 
@@ -202,72 +202,78 @@ const output = "js.pdf";
 
 //*************************************************************************************************************** */
 
-// const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer");
+const URL = "https://www.lakebrains.com/";
 
-// const main = async () => {
-//   let browser = await puppeteer.launch({
-//     headless: false,
-//   });
-//   let page = await browser.newPage();
-//   await page.goto(URL, { waitUntil: "networkidle0" });
-//   await findSectionDivs(page, "body");
-//   await page.waitForTimeout(2000)
-//   await page.emulateMediaType("print");
-//   const pdf = await page.pdf({
-//     path: "result2.pdf",
-//     margin: { top: "100px", right: "50px", bottom: "100px", left: "50px" },
-//     printBackground: true,
-//     format: "A4",
-//   });
-//   console.log("Done");
-//   //   browser.close();
-// };
+const main = async () => {
+  let browser = await puppeteer.launch({
+    headless: false,
+    args : [`--start-maximized`],
+    defaultViewport : null
+  });
+  let page = await browser.newPage();
+  await page.setDefaultNavigationTimeout(0)
+  await page.goto(URL, { waitUntil: "networkidle0" });
+  await findSectionDivs(page, "body");
+  await page.waitForTimeout(2000)
+  await page.emulateMediaType("print");
+  const pdf = await page.pdf({
+    path: "result2.pdf",
+    margin: { top: "20px", right: "20px", bottom: "20px", left: "20px" },
+    printBackground: true,
+    displayHeaderFooter : false,
+    format: "A4",
+    scale : 0.6
+  });
+  console.log("Done");
+  //   browser.close();
+};
 
-// main();
+main();
 
-// const findSectionDivs = async (page, el) => {
-//   let divtags = await page.$$eval(`${el} > div`, (els) =>
-//     els.map((el) => el.getAttribute("class"))
-//   );
-//   console.log(divtags);
-//   if (!(divtags.length && divtags.length > 2)) {
-//     for (let i = 0; i < divtags.length; i++) {
-//       let element = divtags[i];
-//       if (element) {
-//         element = element.split(" ");
-//         let parent = "";
-//         for (let j = 0; j < element.length; j++) {
-//           const el = element[j];
-//           parent = parent + "." + el;
-//         }
-//         findSectionDivs(page, parent);
-//       } else {
-//         findSectionDivs(page, `${el} > div > div`);
-//       }
-//     }
-//   } else {
-//     let style = "";
-//     for (let k = 0; k < divtags.length; k++) {
-//       const el = divtags[k];
-//       if (el) {
-//         let split = el.split(" ");
-//         let classSelector = "";
-//         for (let t = 0; t < split.length; t++) {
-//           const tt = split[t];
-//           classSelector = classSelector + "." + tt;
-//         }
-//         style =
-//           style +
-//           `
-//           ${classSelector} {
-//             display: block !important;
-//           }
-//         `;
-//       }
-//     }
-//     // console.log(divtags);
-//     await page.addStyleTag({
-//       content: style,
-//     });
-//   }
-// };
+const findSectionDivs = async (page, el) => {
+  let divtags = await page.$$eval(`${el} > div`, (els) =>
+    els.map((el) => el.getAttribute("class"))
+  );
+  console.log(divtags);
+  if (!(divtags.length && divtags.length > 2)) {
+    for (let i = 0; i < divtags.length; i++) {
+      let element = divtags[i];
+      if (element) {
+        element = element.split(" ");
+        let parent = "";
+        for (let j = 0; j < element.length; j++) {
+          const el = element[j];
+          parent = parent + "." + el;
+        }
+        findSectionDivs(page, parent);
+      } else {
+        findSectionDivs(page, `${el} > div > div`);
+      }
+    }
+  } else {
+    let style = "";
+    for (let k = 0; k < divtags.length; k++) {
+      const el = divtags[k];
+      if (el) {
+        let split = el.split(" ");
+        let classSelector = "";
+        for (let t = 0; t < split.length; t++) {
+          const tt = split[t];
+          classSelector = classSelector + "." + tt;
+        }
+        style =
+          style +
+          `
+          ${classSelector} {
+            display: block !important;
+          }
+        `;
+      }
+    }
+    // console.log(divtags);
+    await page.addStyleTag({
+      content: style,
+    });
+  }
+};
