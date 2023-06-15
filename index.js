@@ -200,522 +200,595 @@
 //   await browser.close();
 // })();
 
-// //Ali 07/09/2023 *************************************************************************************************************** */
-// const puppeteer = require("puppeteer");
+//Ali 07/09/2023 *************************************************************************************************************** */
+const puppeteer = require("puppeteer");
 
+
+const allUrls = ["https://humbleandfume.com/", "https://www.brookfieldproperties.com/en/who-we-are/leadership.html", "https://www.i3verticals.com/leadership/", "https://investors.crocs.com/governance/management/default.aspx", "https://www.nexteraenergy.com/company/leadership.html/company.html", "https://www.ttec.com/about-us/executive-team", "https://www.eildoncapital.com/people/", "https://bluglass.com/our-people/", "https://traton.com/en/company/executive-board.html", "https://amagroupltd.com/our-business/ama-group-board/", "https://www.adorebeautygroup.com.au/investor-centre/?page=board-of-directors", "https://www.pixium-vision.com/2019/09/lloyd-diamond/", "https://ir.gatx.com/governance/management/default.aspx", "https://ir.essentgroup.com/governance/management/default.aspx", "https://investors.esabcorporation.com/governance/executive-management/default.aspx", "https://www.automationnth.com/about-us/#team", "https://www.advatix.com/team", "https://jrvrgroup.com/james-river-insurance/our-company/leadership", "https://newsroom.fiserv.com/corporate-information/executive-leadership", "https://www.idacorpinc.com/about-us/our-leadership/default.aspx", "https://www.iaai.com/marketing/ritchiebros-investor-relations", "https://catalystcr.com/our-people/", "https://ir.applied.com/governance/corporate-management/default.aspx", "https://datalix.eu/", "https://bonobos.com/", "https://lakebrains.com/", "https://www.tcs.com/", "https://www.infosys.com/", "https://www.hcltech.com/", "https://www.tata.com/", "https://www.larsentoubro.com/", "https://www.pwc.com/", "https://www.mphasis.com/home.html"]
+
+const main = async (url) => {
+
+
+  const customArgs = [
+    "--start-maximized",
+    "--load-extension=C:/Users/Abdeali/AppData/Local/Google/Chrome/User Data/Profile 10/Extensions/edibdbjcniadpccecjdfdjjppcpchdlm/1.1.1_0",
+  ];
+
+  let browser = await puppeteer.launch({
+    headless: false,
+    defaultViewport: null,
+    // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    ignoreDefaultArgs: ["--disable-extensions", "--enable-automation"],
+    args: customArgs,
+  });
+  let page = await browser.newPage();
+  await page.setDefaultNavigationTimeout(0)
+  for (let i = 0; i < allUrls.length; i++) {
+    try {
+      const url = allUrls[i];
+      const URL = url;
+      const fileName = URL.split("/")[2]
+      console.log(fileName);
+      await page.goto(URL, { waitUntil: "networkidle0" });
+      await setLinkMargin(page);
+      await page.waitForTimeout(10000)
+      await checkRemovePopups(page)
+      await autoScroll(page);
+      await page.waitForTimeout(2000)
+      await checkSection(page)
+      let mainTag = await page.$("main")
+      if (mainTag) {
+        await findSectionDivs(page, "main", 1)
+      } else {
+        await findSectionDivs(page, "body", 1);
+      }
+      await checkImage(page)
+      await page.waitForTimeout(2000)
+      await page.emulateMediaType("print");
+      const pdf = await page.pdf({
+        path: `pdfs/${fileName}.pdf`,
+        margin: { top: "20px", right: "20px", bottom: "20px", left: "20px" },
+        printBackground: true,
+        displayHeaderFooter: true,
+        format: "A4",
+        scale: 0.5
+      });
+      console.log("Done");
+    } catch (error) {
+      console.log(error);
+      console.log("Done");
+    }
+  }
+
+  // "https://www.larsentoubro.com/", "https://www.pwc.com/", "https://www.mphasis.com/home.html"
+
+  // try {
+  //   const URL = "https://www.mphasis.com/home.html";
+  //   const fileName = URL.split("/")[2]
+  //   await page.goto(URL, { waitUntil: "networkidle0" });
+  //   await setLinkMargin(page);
+  //   // await page.waitForTimeout(30000)
+  //   await checkRemovePopups(page)
+  //   await autoScroll(page);
+  //   await page.waitForTimeout(2000)
+  //   let mainTag = await page.$("main")
+  //   if (mainTag) {
+  //     await findSectionDivs(page, "main", 1)
+  //   } else {
+  //     await findSectionDivs(page, "body", 1);
+  //   }
+  //   // await checkSection(page)
+  //   await checkImage(page)
+  //   await page.waitForTimeout(2000)
+  //   await page.emulateMediaType("print");
+  //   const pdf = await page.pdf({
+  //     path: `pdfs/${fileName}.pdf`,
+  //     margin: { top: "20px", right: "20px", bottom: "20px", left: "20px" },
+  //     printBackground: true,
+  //     displayHeaderFooter: false,
+  //     format: "A4",
+  //     scale: 0.5
+  //   });
+  //   console.log("Done");
+  // } catch (error) {
+  //   console.log(error);
+  //   console.log("Done");
+  // }
+
+  browser.close();
+};
+main()
+
+async function autoScroll(page) {
+  await page.evaluate(async () => {
+    await new Promise((resolve) => {
+      var totalHeight = 0;
+      var distance = 100;
+      var timer = setInterval(() => {
+        var scrollHeight = document.body.scrollHeight;
+        window.scrollBy(0, distance);
+        totalHeight += distance;
+
+        if (totalHeight >= scrollHeight - window.innerHeight) {
+          clearInterval(timer);
+          resolve();
+        }
+      }, 100);
+    });
+  });
+}
+
+async function setLinkMargin(page) {
+  let style = await page.$$eval("a", els => {
+    let style = ""
+    for (let i = 0; i < els.length; i++) {
+      let el = els[i];
+      el.href = "#"
+
+      // el.style.margin = "25px"
+      // el.style.padding = "10px"
+      // el.style.display = "block"
+      // let br = document.createElement('br')
+      // el.after(br);
+      // let el2 = el.parentElement
+      // el2.insertAdjacentHTML('beforeend', '<br>');
+      console.log("el2 =>",el);
+    }
+  })
+}
+
+async function checkRemovePopups(page) {
+  let style = await page.$$eval("*", els => {
+    var elems = els;
+    var len = elems.length
+    console.log(els);
+
+    for (var i = 0; i < len; i++) {
+      try {
+        var computedStyle = window.getComputedStyle(elems[i], null);
+        var tagName = elems[i].tagName.toLowerCase();
+
+        if (tagName === "header") {
+          // var headerValue = computedStyle.getPropertyValue("header");
+
+          console.log("Computed header value:", computedStyle.getPropertyValue());
+        } else if (window.getComputedStyle(elems[i], null).getPropertyValue('position') == 'fixed') {
+          var classLoop1 = elems[i].id ? ["#" + elems[i].id] : elems[i].className.split(" ");
+          // console.log(classLoop1)
+          classLoop1 = classLoop1.filter(items => items !== "")
+          classLoop1 = classLoop1.filter(items => items !== " ")
+
+          if (elems[i].className.toLowerCase().includes("header") || elems[i].className.toLowerCase().includes("navbar")) {
+            console.log("elems[i] true =>", elems[i], classLoop1)
+          } else {
+            var allData = classLoop1.map((items) => {
+              return elems[i].id ? items : "." + items
+            })
+            // console.log("allData =>",allData)
+            const parentElement = document.querySelector(allData.join(""));
+            // console.log(parentElement)
+            const nestedElements = parentElement.querySelectorAll("*");
+
+
+            console.log("nestedElements.length =>", nestedElements)
+
+            if (nestedElements.length) {
+              // Iterate over each nested element and log its class names
+              for (const element of nestedElements) {
+                var classNames = Array.from(element.classList);
+                if (!classNames.join(" ").includes("header") || !classNames.join(" ").includes("navbar")) {
+                  // console.log("elems[i] false =>", elems[i], classLoop1)
+                  elems[i].remove();
+                  break;
+                  // return;
+                }
+              };
+            } else if (parentElement) {
+              var classNames = Array.from(nestedElements.classList);
+              // console.log("classNames =>", classNames)
+              if (!classNames.join(" ").includes("header") || !classNames.join(" ").includes("navbar")) {
+                console.log("elems[i] false =>", elems[i], classLoop1)
+                elems[i].remove();
+              }
+            }
+          }
+        }
+      } catch (error) {
+        // console.log(error)
+      }
+    }
+  })
+
+}
+
+const checkImage = async (page) => {
+  let style = await page.$$eval("img", els => {
+    let style = ""
+    for (let i = 0; i < els.length; i++) {
+      let el = els[i];
+      let width = el.offsetWidth
+      let height = el.offsetHeight
+      if (height > 500) {
+        console.log(height);
+        el = el.parentElement
+        console.log(el);
+        el.style.display = "block"
+        // el.style.marginTop = "1000px"
+        // el.style.pageBreakAfter = "always"
+        el.style.pageBreakBefore = "always"
+        el.style.pageBreakInside = "avoid";
+        el.style.marginTop = "160px"
+      }
+    }
+  })
+
+  // await page.waitForTimeout(300000)
+}
+
+const checkSection = async (page) => {
+  let style = await page.$$eval("main", els => {
+    let style = ""
+    for (let i = 0; i < els.length; i++) {
+      let el = els[i];
+      let width = el.offsetWidth
+      let height = el.offsetHeight
+      console.log(height);
+      el = el.parentElement
+      el.style.pageBreakAfter = "always"
+      el.style.pageBreakInside = "avoid";
+      el.style.marginTop = "160px"
+    }
+  })
+
+  // await page.waitForTimeout(300000)
+}
+
+const findSectionDivs = async (page, el, index) => {
+  console.log(index);
+  if (index < 6) {
+    console.log("senasio => 1");
+    let divtags = await page.$$eval(`${el} > div`, (els) => {
+      let data = []
+      for (let i = 0; i < els.length; i++) {
+        const el = els[i];
+        console.log(el);
+        let cls = el.getAttribute("class")?.trim()
+        if (cls && cls.length) {
+          cls = cls.split(" ");
+          let parent = "";
+          for (let j = 0; j < cls.length; j++) {
+            const el = cls[j];
+            parent = parent + "." + el;
+          }
+          data.push(parent)
+        }
+        else {
+          let id = el.getAttribute('id')?.trim()
+          if (id) {
+            data.push("#" + id)
+          }
+          else {
+            data.push(null)
+          }
+        }
+      }
+      return data
+    }
+
+    );
+    console.log("divtags-1 =>", divtags);
+
+    if (divtags.length && divtags.length < 2) {
+      console.log("senasio => 1.1");
+      for (let i = 0; i < divtags.length; i++) {
+        let element = divtags[i];
+        if (element) {
+          // element = element.split(" ");
+          // let parent = "";
+          // for (let j = 0; j < element.length; j++) {
+          //   const el = element[j];
+          //   parent = parent + "." + el;
+          // }
+          findSectionDivs(page, element, index + 1);
+        } else {
+          findSectionDivs(page, `${el} > div > div`, index + 1);
+        }
+      }
+    } else if (divtags.length && divtags.length > 2) {
+      console.log("senasio => 1.2");
+      let style = "";
+      for (let k = 0; k < divtags.length; k++) {
+        const el = divtags[k];
+        console.log((el && (el.includes(".") || el.includes("#"))))
+        if (el && (el.includes(".") || el.includes("#"))) {
+          // let split = el.split(" ");
+          // let classSelector = "";
+          // for (let t = 0; t < split.length; t++) {
+          //   const tt = split[t];
+          //   classSelector = classSelector + "." + tt;
+          // }
+          style =
+            style +
+            `
+          ${el} {
+            page-break-after: always; 
+            margin-top: 50px; 
+          }
+        `;
+        }
+      }
+      // divtags = divtags.filter((items) => items !== null)
+      // console.log(divtags);
+      // await page.addStyleTag({
+      //   content: style,
+      // });
+
+      // const allCss = divtags.map((items) => {
+      //   var arrayClass = items.split(" ")
+      //   console.log(arrayClass);
+      //   arrayClass = arrayClass.filter((items) => items !== "")
+      //   arrayClass = arrayClass.filter((items) => items !== " ")
+      //   // arrayClass = arrayClass.map((items) => "." + items)
+      //   // console.log("arrayClass =>", arrayClass.join(""));
+
+      //   return `${arrayClass.join("")} { page-break-after: always; margin-top: 50px; height: 100vh }`
+      // })
+
+      // console.log("style => ", style);
+      // console.log(allCss);
+      // Set CSS styles to control page breaks
+      return await page.addStyleTag({
+        content: `
+      @page {
+        size: A4;
+      }
+      ${style}
+      `,
+      });
+    }
+    // else {
+    //   // findSectionDivs(page, `div > div`, index + 1);
+    // }
+  }
+  else {
+    console.log("senasio => 2");
+    check2Div(page, "body")
+  }
+};
+
+// .home-top-banner.example-classname {
+//   page-break-after: always;
+// }
+
+let check2Div = async (page, el) => {
+  let divtags = await page.$$eval(`${el} > div`, (els) => {
+    let data = []
+    for (let i = 0; i < els.length; i++) {
+      const el = els[i];
+      let cls = el.getAttribute("class")?.trim()
+      if (cls && cls.length) {
+        cls = cls.split(" ");
+        let parent = "";
+        for (let j = 0; j < cls.length; j++) {
+          const el = cls[j];
+          parent = parent + "." + el;
+        }
+        data.push(parent)
+      }
+      else {
+        let id = el.getAttribute('id')?.trim()
+        if (id) {
+          data.push("#" + id)
+        }
+        else {
+          continue;
+        }
+      }
+    }
+    return data
+  }
+
+  );
+  console.log("divtags-1 =>", divtags);
+  if (divtags.length && divtags.length < 1) {
+    console.log("senasio => 1.1");
+    for (let i = 0; i < divtags.length; i++) {
+      let element = divtags[i];
+      if (element) {
+        // element = element.split(" ");
+        // let parent = "";
+        // for (let j = 0; j < element.length; j++) {
+        //   const el = element[j];
+        //   parent = parent + "." + el;
+        // }
+        check2Div(page, element);
+      } else {
+        check2Div(page, `${el} > div > div`);
+      }
+    }
+  } else if (divtags.length && divtags.length > 2) {
+    console.log("senasio => 1.2");
+    let style = "";
+    for (let k = 0; k < divtags.length; k++) {
+      const el = divtags[k];
+      console.log((el && (el.includes(".") || el.includes("#"))))
+      if (el && (el.includes(".") || el.includes("#"))) {
+        // let split = el.split(" ");
+        // let classSelector = "";
+        // for (let t = 0; t < split.length; t++) {
+        //   const tt = split[t];
+        //   classSelector = classSelector + "." + tt;
+        // }
+        style =
+          style +
+          `
+        ${el} {
+          page-break-after: always; 
+          margin-top: 50px; 
+        }
+      `;
+      }
+    }
+    // divtags = divtags.filter((items) => items !== null)
+    // console.log(divtags);
+    // await page.addStyleTag({
+    //   content: style,
+    // });
+
+    // const allCss = divtags.map((items) => {
+    //   var arrayClass = items.split(" ")
+    //   console.log(arrayClass);
+    //   arrayClass = arrayClass.filter((items) => items !== "")
+    //   arrayClass = arrayClass.filter((items) => items !== " ")
+    //   // arrayClass = arrayClass.map((items) => "." + items)
+    //   // console.log("arrayClass =>", arrayClass.join(""));
+
+    //   return `${arrayClass.join("")} { page-break-after: always; margin-top: 50px; height: 100vh }`
+    // })
+
+    console.log("style => ", style);
+    // console.log(allCss);
+    // Set CSS styles to control page breaks
+    return await page.addStyleTag({
+      content: `
+    @page {
+      size: A4;
+    }
+    ${style}
+    `,
+    });
+  }
+}
+
+
+
+// //*************************************************************************************************************** */
+
+// const puppeteer = require("puppeteer");
+// const fs = require('fs')
+// const url = "https://www.lakebrains.com/";
+
+// const output = "js.pdf";
 
 // const allUrls = ["https://humbleandfume.com/", "https://www.brookfieldproperties.com/en/who-we-are/leadership.html", "https://www.i3verticals.com/leadership/", "https://investors.crocs.com/governance/management/default.aspx", "https://www.nexteraenergy.com/company/leadership.html/company.html", "https://www.ttec.com/about-us/executive-team", "https://www.eildoncapital.com/people/", "https://bluglass.com/our-people/", "https://traton.com/en/company/executive-board.html", "https://amagroupltd.com/our-business/ama-group-board/", "https://www.adorebeautygroup.com.au/investor-centre/?page=board-of-directors", "https://www.pixium-vision.com/2019/09/lloyd-diamond/", "https://ir.gatx.com/governance/management/default.aspx", "https://ir.essentgroup.com/governance/management/default.aspx", "https://investors.esabcorporation.com/governance/executive-management/default.aspx", "https://www.automationnth.com/about-us/#team", "https://www.advatix.com/team", "https://jrvrgroup.com/james-river-insurance/our-company/leadership", "https://newsroom.fiserv.com/corporate-information/executive-leadership", "https://www.idacorpinc.com/about-us/our-leadership/default.aspx", "https://www.iaai.com/marketing/ritchiebros-investor-relations", "https://catalystcr.com/our-people/", "https://ir.applied.com/governance/corporate-management/default.aspx", "https://datalix.eu/", "https://bonobos.com/", "https://lakebrains.com/", "https://www.tcs.com/", "https://www.infosys.com/", "https://www.hcltech.com/", "https://www.tata.com/", "https://www.larsentoubro.com/", "https://www.pwc.com/", "https://www.mphasis.com/home.html"]
 
-// const main = async (url) => {
-
-
+// console.log(allUrls.length);
+// const main = async () => {
 //   const customArgs = [
 //     "--start-maximized",
-//     "--load-extension=C:/Users/Abdeali/AppData/Local/Google/Chrome/User Data/Profile 10/Extensions/edibdbjcniadpccecjdfdjjppcpchdlm/1.1.1_0",
+//     "--load-extension=C:/Users/Abdeali/Downloads/ohlencieiipommannpdfcmfdpjjmeolj",
 //   ];
 
 //   let browser = await puppeteer.launch({
 //     headless: false,
 //     defaultViewport: null,
-//     // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+//     executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
 //     ignoreDefaultArgs: ["--disable-extensions", "--enable-automation"],
 //     args: customArgs,
 //   });
-//   let page = await browser.newPage();
-//   await page.setDefaultNavigationTimeout(0)
-//   // for (let i = 0; i < allUrls.length; i++) {
-//   //   try {
-//   //     const url = allUrls[i];
-//   //     const URL = url;
-//   //     const fileName = URL.split("/")[2]
-//   //     console.log(fileName);
-//   //     await page.goto(URL, { waitUntil: "networkidle0" });
-//   //     await page.waitForTimeout(10000)
-//   //     await checkRemovePopups(page)
-//   //     await autoScroll(page);
-//   //     await page.waitForTimeout(2000)
-//   //     await checkSection(page)
-//   //     let mainTag = await page.$("main")
-//   //     if (mainTag) {
-//   //       await findSectionDivs(page, "main", 1)
-//   //     } else {
-//   //       await findSectionDivs(page, "body", 1);
-//   //     }
-//   //     await checkImage(page)
-//   //     await page.waitForTimeout(2000)
-//   //     await page.emulateMediaType("print");
-//   //     const pdf = await page.pdf({
-//   //       path: `pdfs/${fileName}.pdf`,
-//   //       margin: { top: "20px", right: "20px", bottom: "20px", left: "20px" },
-//   //       printBackground: true,
-//   //       displayHeaderFooter: true,
-//   //       format: "A4",
-//   //       scale: 0.5
-//   //     });
-//   //     console.log("Done");
-//   //   } catch (error) {
-//   //     console.log(error);
-//   //     console.log("Done");
-//   //   }
-//   // }
 
-//   // "https://www.larsentoubro.com/", "https://www.pwc.com/", "https://www.mphasis.com/home.html"
+//     for (let i = 0; i < allUrls.length; i++) {
+//     try {
+//       const url = allUrls[i];
+//       const URL = url;
+//       const fileName = URL.split("/")[2]
+//       const backgroundPageTarget = await browser.waitForTarget(
+//         (target) => target.type() === "background_page"
+//       );
+//       const backgroundPage = await backgroundPageTarget.page()
+//       const page = await browser.newPage();
+//       await page.goto(URL, {
+//         waitUntil: "networkidle0",
+//       });
+//       await page.waitForTimeout(2000);
+//       await backgroundPage.evaluate(() => {
+//         startWokr()
+//       })
+    
+//       await page.waitForTimeout(5000);
+    
+//       // const frameHandle = await page.$('iframe');
+//       // const frame = await frameHandle.contentFrame();
+    
+    
+    
+//       // // Generate the PDF of the iframe content
+//       // const pdf = await frame.pdf({
+//       //   format: 'A4',
+//       //   path: `pdfs/${"test"}.pdf`,
+//       //   printBackground: true,
+//       // });
+//       const frame = page.frames().find(frame => frame.url().includes("core.html"));
+//       // console.log("frame =>", frame);
+    
+//       await frame.click("#w-pdf")
+//       await page.waitForTimeout(10000);
+    
+//       const frame2 = page.frames().find(frame => frame.name().includes("pdf_iframe"));
+//       // console.log(frame2);
+//       await frame2.click(".pdf-download")
+//       await page.waitForTimeout(25000);
+    
+//       // pdf-download-image
+//       // const data = await renderPageToHtml(page)
+    
+//       // console.log("data =>",data);
+//       // fs.writeFileSync('page.html', data);
+//       // await page.waitForTimeout(1500000);
+    
+//       // const pdf = await frame.pdf({
+//       //   path: `pdfs/${"test"}.pdf`,
+//       //   margin: { top: "20px", right: "20px", bottom: "20px", left: "20px" },
+//       //   printBackground: true,
+//       //   displayHeaderFooter: false,
+//       //   format: "A4",
+//       //   scale: 0.5
+//       // });
 
-//   try {
-//     const URL = "https://www.mphasis.com/home.html";
-//     const fileName = URL.split("/")[2]
-//     await page.goto(URL, { waitUntil: "networkidle0" });
-//     await setLinkMargin(page);
-//     // await page.waitForTimeout(30000)
-//     await checkRemovePopups(page)
-//     await autoScroll(page);
-//     await page.waitForTimeout(2000)
-//     let mainTag = await page.$("main")
-//     if (mainTag) {
-//       await findSectionDivs(page, "main", 1)
-//     } else {
-//       await findSectionDivs(page, "body", 1);
+//       await page.close();
+//       console.log("Done");
+//     } catch (error) {
+//       console.log(error);
+//       console.log("Done");
 //     }
-//     // await checkSection(page)
-//     await checkImage(page)
-//     await page.waitForTimeout(2000)
-//     await page.emulateMediaType("print");
-//     const pdf = await page.pdf({
-//       path: `pdfs/${fileName}.pdf`,
-//       margin: { top: "20px", right: "20px", bottom: "20px", left: "20px" },
-//       printBackground: true,
-//       displayHeaderFooter: false,
-//       format: "A4",
-//       scale: 0.5
-//     });
-//     console.log("Done");
-//   } catch (error) {
-//     console.log(error);
-//     console.log("Done");
 //   }
 
-//   browser.close();
+
+//   await browser.close();
 // };
 // main()
 
-// async function autoScroll(page) {
-//   await page.evaluate(async () => {
-//     await new Promise((resolve) => {
-//       var totalHeight = 0;
-//       var distance = 100;
-//       var timer = setInterval(() => {
-//         var scrollHeight = document.body.scrollHeight;
-//         window.scrollBy(0, distance);
-//         totalHeight += distance;
+// async function renderPageToHtml(page) {
 
-//         if (totalHeight >= scrollHeight - window.innerHeight) {
-//           clearInterval(timer);
-//           resolve();
-//         }
-//       }, 100);
-//     });
+//   const iframe = await page.$("iframe#pf-core");
+//   console.log("iframe => ", iframe);
+
+//   const frame = await iframe.contentFrame();
+//   const context = await frame.executionContext();
+//   const res = await context.evaluate(() => {
+//     const el = document.querySelector("*");
+//     if (el) return el.outerHTML;
 //   });
-// }
-
-// async function setLinkMargin(page) {
-//   let style = await page.$$eval("a", els => {
-//     let style = ""
-//     for (let i = 0; i < els.length; i++) {
-//       let el = els[i];
-//       el.href = "#"
-
-//       // el.style.margin = "25px"
-//       // el.style.padding = "10px"
-//       // el.style.display = "block"
-//       // let br = document.createElement('br')
-//       // el.after(br);
-//       // let el2 = el.parentElement
-//       // el2.insertAdjacentHTML('beforeend', '<br>');
-//       console.log("el2 =>",el);
-//     }
-//   })
-// }
-
-// async function checkRemovePopups(page) {
-//   let style = await page.$$eval("*", els => {
-//     var elems = els;
-//     var len = elems.length
-//     console.log(els);
-
-//     for (var i = 0; i < len; i++) {
-//       try {
-//         var computedStyle = window.getComputedStyle(elems[i], null);
-//         var tagName = elems[i].tagName.toLowerCase();
-
-//         if (tagName === "header") {
-//           // var headerValue = computedStyle.getPropertyValue("header");
-
-//           console.log("Computed header value:", computedStyle.getPropertyValue());
-//         } else if (window.getComputedStyle(elems[i], null).getPropertyValue('position') == 'fixed') {
-//           var classLoop1 = elems[i].id ? ["#" + elems[i].id] : elems[i].className.split(" ");
-//           // console.log(classLoop1)
-//           classLoop1 = classLoop1.filter(items => items !== "")
-//           classLoop1 = classLoop1.filter(items => items !== " ")
-
-//           if (elems[i].className.toLowerCase().includes("header") || elems[i].className.toLowerCase().includes("navbar")) {
-//             console.log("elems[i] true =>", elems[i], classLoop1)
-//           } else {
-//             var allData = classLoop1.map((items) => {
-//               return elems[i].id ? items : "." + items
-//             })
-//             // console.log("allData =>",allData)
-//             const parentElement = document.querySelector(allData.join(""));
-//             // console.log(parentElement)
-//             const nestedElements = parentElement.querySelectorAll("*");
-
-
-//             console.log("nestedElements.length =>", nestedElements)
-
-//             if (nestedElements.length) {
-//               // Iterate over each nested element and log its class names
-//               for (const element of nestedElements) {
-//                 var classNames = Array.from(element.classList);
-//                 if (!classNames.join(" ").includes("header") || !classNames.join(" ").includes("navbar")) {
-//                   // console.log("elems[i] false =>", elems[i], classLoop1)
-//                   elems[i].remove();
-//                   break;
-//                   // return;
-//                 }
-//               };
-//             } else if (parentElement) {
-//               var classNames = Array.from(nestedElements.classList);
-//               // console.log("classNames =>", classNames)
-//               if (!classNames.join(" ").includes("header") || !classNames.join(" ").includes("navbar")) {
-//                 console.log("elems[i] false =>", elems[i], classLoop1)
-//                 elems[i].remove();
-//               }
-//             }
-//           }
-//         }
-//       } catch (error) {
-//         // console.log(error)
-//       }
-//     }
-//   })
-
-// }
-
-// const checkImage = async (page) => {
-//   let style = await page.$$eval("img", els => {
-//     let style = ""
-//     for (let i = 0; i < els.length; i++) {
-//       let el = els[i];
-//       let width = el.offsetWidth
-//       let height = el.offsetHeight
-//       if (height > 500) {
-//         console.log(height);
-//         el = el.parentElement
-//         console.log(el);
-//         el.style.display = "block"
-//         // el.style.marginTop = "1000px"
-//         // el.style.pageBreakAfter = "always"
-//         el.style.pageBreakBefore = "always"
-//         el.style.pageBreakInside = "avoid";
-//         el.style.marginTop = "160px"
-//       }
-//     }
-//   })
-
-//   // await page.waitForTimeout(300000)
-// }
-
-// const checkSection = async (page) => {
-//   let style = await page.$$eval("main", els => {
-//     let style = ""
-//     for (let i = 0; i < els.length; i++) {
-//       let el = els[i];
-//       let width = el.offsetWidth
-//       let height = el.offsetHeight
-//       console.log(height);
-//       el = el.parentElement
-//       el.style.pageBreakAfter = "always"
-//       el.style.pageBreakInside = "avoid";
-//       el.style.marginTop = "160px"
-//     }
-//   })
-
-//   // await page.waitForTimeout(300000)
-// }
-
-// const findSectionDivs = async (page, el, index) => {
-//   console.log(index);
-//   if (index < 6) {
-//     console.log("senasio => 1");
-//     let divtags = await page.$$eval(`${el} > div`, (els) => {
-//       let data = []
-//       for (let i = 0; i < els.length; i++) {
-//         const el = els[i];
-//         console.log(el);
-//         let cls = el.getAttribute("class")?.trim()
-//         if (cls && cls.length) {
-//           cls = cls.split(" ");
-//           let parent = "";
-//           for (let j = 0; j < cls.length; j++) {
-//             const el = cls[j];
-//             parent = parent + "." + el;
-//           }
-//           data.push(parent)
-//         }
-//         else {
-//           let id = el.getAttribute('id')?.trim()
-//           if (id) {
-//             data.push("#" + id)
-//           }
-//           else {
-//             data.push(null)
-//           }
-//         }
-//       }
-//       return data
-//     }
-
-//     );
-//     console.log("divtags-1 =>", divtags);
-
-//     if (divtags.length && divtags.length < 2) {
-//       console.log("senasio => 1.1");
-//       for (let i = 0; i < divtags.length; i++) {
-//         let element = divtags[i];
-//         if (element) {
-//           // element = element.split(" ");
-//           // let parent = "";
-//           // for (let j = 0; j < element.length; j++) {
-//           //   const el = element[j];
-//           //   parent = parent + "." + el;
-//           // }
-//           findSectionDivs(page, element, index + 1);
-//         } else {
-//           findSectionDivs(page, `${el} > div > div`, index + 1);
-//         }
-//       }
-//     } else if (divtags.length && divtags.length > 2) {
-//       console.log("senasio => 1.2");
-//       let style = "";
-//       for (let k = 0; k < divtags.length; k++) {
-//         const el = divtags[k];
-//         console.log((el && (el.includes(".") || el.includes("#"))))
-//         if (el && (el.includes(".") || el.includes("#"))) {
-//           // let split = el.split(" ");
-//           // let classSelector = "";
-//           // for (let t = 0; t < split.length; t++) {
-//           //   const tt = split[t];
-//           //   classSelector = classSelector + "." + tt;
-//           // }
-//           style =
-//             style +
-//             `
-//           ${el} {
-//             page-break-after: always; 
-//             margin-top: 50px; 
-//           }
-//         `;
-//         }
-//       }
-//       // divtags = divtags.filter((items) => items !== null)
-//       // console.log(divtags);
-//       // await page.addStyleTag({
-//       //   content: style,
-//       // });
-
-//       // const allCss = divtags.map((items) => {
-//       //   var arrayClass = items.split(" ")
-//       //   console.log(arrayClass);
-//       //   arrayClass = arrayClass.filter((items) => items !== "")
-//       //   arrayClass = arrayClass.filter((items) => items !== " ")
-//       //   // arrayClass = arrayClass.map((items) => "." + items)
-//       //   // console.log("arrayClass =>", arrayClass.join(""));
-
-//       //   return `${arrayClass.join("")} { page-break-after: always; margin-top: 50px; height: 100vh }`
-//       // })
-
-//       // console.log("style => ", style);
-//       // console.log(allCss);
-//       // Set CSS styles to control page breaks
-//       return await page.addStyleTag({
-//         content: `
-//       @page {
-//         size: A4;
-//       }
-//       ${style}
-//       `,
-//       });
-//     }
-//     // else {
-//     //   // findSectionDivs(page, `div > div`, index + 1);
-//     // }
-//   }
-//   else {
-//     console.log("senasio => 2");
-//     check2Div(page, "body")
-//   }
-// };
-
-// // .home-top-banner.example-classname {
-// //   page-break-after: always;
-// // }
-
-// let check2Div = async (page, el) => {
-//   let divtags = await page.$$eval(`${el} > div`, (els) => {
-//     let data = []
-//     for (let i = 0; i < els.length; i++) {
-//       const el = els[i];
-//       let cls = el.getAttribute("class")?.trim()
-//       if (cls && cls.length) {
-//         cls = cls.split(" ");
-//         let parent = "";
-//         for (let j = 0; j < cls.length; j++) {
-//           const el = cls[j];
-//           parent = parent + "." + el;
-//         }
-//         data.push(parent)
-//       }
-//       else {
-//         let id = el.getAttribute('id')?.trim()
-//         if (id) {
-//           data.push("#" + id)
-//         }
-//         else {
-//           continue;
-//         }
-//       }
-//     }
-//     return data
+//   if (res) {
+//     await iframe.evaluate((a, res) => {
+//       a.innerHTML = res;
+//     }, res);
 //   }
 
-//   );
-//   console.log("divtags-1 =>", divtags);
-//   if (divtags.length && divtags.length < 1) {
-//     console.log("senasio => 1.1");
-//     for (let i = 0; i < divtags.length; i++) {
-//       let element = divtags[i];
-//       if (element) {
-//         // element = element.split(" ");
-//         // let parent = "";
-//         // for (let j = 0; j < element.length; j++) {
-//         //   const el = element[j];
-//         //   parent = parent + "." + el;
-//         // }
-//         check2Div(page, element);
-//       } else {
-//         check2Div(page, `${el} > div > div`);
-//       }
-//     }
-//   } else if (divtags.length && divtags.length > 2) {
-//     console.log("senasio => 1.2");
-//     let style = "";
-//     for (let k = 0; k < divtags.length; k++) {
-//       const el = divtags[k];
-//       console.log((el && (el.includes(".") || el.includes("#"))))
-//       if (el && (el.includes(".") || el.includes("#"))) {
-//         // let split = el.split(" ");
-//         // let classSelector = "";
-//         // for (let t = 0; t < split.length; t++) {
-//         //   const tt = split[t];
-//         //   classSelector = classSelector + "." + tt;
-//         // }
-//         style =
-//           style +
-//           `
-//         ${el} {
-//           page-break-after: always; 
-//           margin-top: 50px; 
-//         }
-//       `;
-//       }
-//     }
-//     // divtags = divtags.filter((items) => items !== null)
-//     // console.log(divtags);
-//     // await page.addStyleTag({
-//     //   content: style,
-//     // });
+//   const iframe2 = await page.$("iframe#pf-core");
+//   console.log("iframe => ", iframe2);
 
-//     // const allCss = divtags.map((items) => {
-//     //   var arrayClass = items.split(" ")
-//     //   console.log(arrayClass);
-//     //   arrayClass = arrayClass.filter((items) => items !== "")
-//     //   arrayClass = arrayClass.filter((items) => items !== " ")
-//     //   // arrayClass = arrayClass.map((items) => "." + items)
-//     //   // console.log("arrayClass =>", arrayClass.join(""));
-
-//     //   return `${arrayClass.join("")} { page-break-after: always; margin-top: 50px; height: 100vh }`
-//     // })
-
-//     console.log("style => ", style);
-//     // console.log(allCss);
-//     // Set CSS styles to control page breaks
-//     return await page.addStyleTag({
-//       content: `
-//     @page {
-//       size: A4;
-//     }
-//     ${style}
-//     `,
-//     });
+//   const frame2 = await iframe2.contentFrame();
+//   const context2 = await frame2.executionContext();
+//   const res2 = await context2.evaluate(() => {
+//     const el = document.querySelector("*");
+//     if (el) return el.outerHTML;
+//   });
+//   if (res2) {
+//     await iframe2.evaluate((a, res) => {
+//       a.innerHTML = res;
+//     }, res2);
 //   }
+
+//   return await page.evaluate(() => new XMLSerializer().serializeToString(document))
 // }
-
-
-
-//*************************************************************************************************************** */
-
-
-
-const puppeteer = require("puppeteer");
-const url = "https://www.lakebrains.com/";
-const output = "js.pdf";
-
-(async () => {
-  const customArgs = [
-    `--start-maximized`,
-    // `--load-extension=C:/Users/lenovo/AppData/Local/Google/Chrome/User Data/Profile 9/Extensions/mcbpblocgmgfnpjjppndjkmgjaogfceg/1.11.25_0`,
-  ];
-  const browser = await puppeteer.launch({
-    defaultViewport: null,
-    headless: false,
-    executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
-    // ignoreDefaultArgs: ["--disable-extensions", "--enable-automation"],
-    args: customArgs,
-  });
-
-  const page = await browser.newPage();
-  page.setRequestInterception(true)
-
-  page.on ( 'request', async request => {
-    console.log(request.resourceType ());
-      if ( request.resourceType () === 'stylesheet'  ) {
-          request.abort ()
-      } else {
-          request.continue ()
-      }
-  })
-  await page.setDefaultNavigationTimeout(0);
-  await page.goto(url, {
-    waitUntil: "networkidle0",
-  });
-  await page.waitForTimeout(2000);
-  await page.evaluate(() => {
-    let styletags = document.querySelectorAll('style')
-    for (let index = 0; index < styletags.length; index++) {
-      const el = styletags[index];
-      el.remove()
-    }
-  })
-  const pdf = await page.pdf({
-    path: `pdfs/${"test"}.pdf`,
-    margin: { top: "20px", right: "20px", bottom: "20px", left: "20px" },
-    printBackground: true,
-    displayHeaderFooter: false,
-    format: "A4",
-    scale: 0.5
-  });
-
-
-
-  await page.close();
-  await browser.close();
-})();
