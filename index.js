@@ -662,7 +662,7 @@
 
 
 
-//*************************************************************************************************************** */
+// 14-06-2023 *************************************************************************************************************** */
 
 const puppeteer = require("puppeteer");
 const fs = require('fs')
@@ -676,7 +676,7 @@ console.log(allUrls.length);
 const main = async () => {
   const customArgs = [
     "--start-maximized",
-    "--load-extension=C:/Users/Abdeali/Downloads/ohlencieiipommannpdfcmfdpjjmeolj",
+    "--load-extension=C:/Users/Abdeali/Downloads/ohlencieiipommannpdfcmfdpjjmeolj,C:/Users/Abdeali/AppData/Local/Google/Chrome/User Data/Profile 10/Extensions/edibdbjcniadpccecjdfdjjppcpchdlm/1.1.1_0",
   ];
 
   let browser = await puppeteer.launch({
@@ -687,7 +687,7 @@ const main = async () => {
     args: customArgs,
   });
 
-    for (let i = 0; i < allUrls.length; i++) {
+  for (let i = 0; i < allUrls.length; i++) {
     try {
       const url = allUrls[i];
       const URL = url;
@@ -700,18 +700,31 @@ const main = async () => {
       await page.goto(URL, {
         waitUntil: "networkidle0",
       });
-      await page.waitForTimeout(2000);
+      await setLinkMargin(page);
+      await page.waitForTimeout(10000)
+      await checkRemovePopups(page)
+      await autoScroll(page);
+      await page.waitForTimeout(2000)
+      await checkSection(page)
+      let mainTag = await page.$("main")
+      if (mainTag) {
+        await findSectionDivs(page, "main", 1)
+      } else {
+        await findSectionDivs(page, "body", 1);
+      }
+      await checkImage(page)
+      await page.waitForTimeout(2000)
       await backgroundPage.evaluate(() => {
         startWokr()
       })
-    
+
       await page.waitForTimeout(5000);
-    
+
       // const frameHandle = await page.$('iframe');
       // const frame = await frameHandle.contentFrame();
-    
-    
-    
+
+
+
       // // Generate the PDF of the iframe content
       // const pdf = await frame.pdf({
       //   format: 'A4',
@@ -720,22 +733,22 @@ const main = async () => {
       // });
       const frame = page.frames().find(frame => frame.url().includes("core.html"));
       // console.log("frame =>", frame);
-    
+
       await frame.click("#w-pdf")
       await page.waitForTimeout(10000);
-    
+
       const frame2 = page.frames().find(frame => frame.name().includes("pdf_iframe"));
       // console.log(frame2);
       await frame2.click(".pdf-download")
       await page.waitForTimeout(25000);
-    
+
       // pdf-download-image
       // const data = await renderPageToHtml(page)
-    
+
       // console.log("data =>",data);
       // fs.writeFileSync('page.html', data);
       // await page.waitForTimeout(1500000);
-    
+
       // const pdf = await frame.pdf({
       //   path: `pdfs/${"test"}.pdf`,
       //   margin: { top: "20px", right: "20px", bottom: "20px", left: "20px" },
@@ -791,4 +804,288 @@ async function renderPageToHtml(page) {
   }
 
   return await page.evaluate(() => new XMLSerializer().serializeToString(document))
+}
+
+
+async function autoScroll(page) {
+  await page.evaluate(async () => {
+    await new Promise((resolve) => {
+      var totalHeight = 0;
+      var distance = 100;
+      var timer = setInterval(() => {
+        var scrollHeight = document.body.scrollHeight;
+        window.scrollBy(0, distance);
+        totalHeight += distance;
+
+        if (totalHeight >= scrollHeight - window.innerHeight) {
+          clearInterval(timer);
+          resolve();
+        }
+      }, 100);
+    });
+  });
+}
+
+async function setLinkMargin(page) {
+  let style = await page.$$eval("a", els => {
+    let style = ""
+    for (let i = 0; i < els.length; i++) {
+      let el = els[i];
+      el.href = "#"
+      console.log("el2 =>", el);
+    }
+  })
+}
+
+async function checkRemovePopups(page) {
+  let style = await page.$$eval("*", els => {
+    var elems = els;
+    var len = elems.length
+    console.log(els);
+
+    for (var i = 0; i < len; i++) {
+      try {
+        var computedStyle = window.getComputedStyle(elems[i], null);
+        var tagName = elems[i].tagName.toLowerCase();
+
+        if (tagName === "header") {
+          // var headerValue = computedStyle.getPropertyValue("header");
+
+          console.log("Computed header value:", computedStyle.getPropertyValue());
+        } else if (window.getComputedStyle(elems[i], null).getPropertyValue('position') == 'fixed') {
+          var classLoop1 = elems[i].id ? ["#" + elems[i].id] : elems[i].className.split(" ");
+          // console.log(classLoop1)
+          classLoop1 = classLoop1.filter(items => items !== "")
+          classLoop1 = classLoop1.filter(items => items !== " ")
+
+          if (elems[i].className.toLowerCase().includes("header") || elems[i].className.toLowerCase().includes("navbar")) {
+            console.log("elems[i] true =>", elems[i], classLoop1)
+          } else {
+            var allData = classLoop1.map((items) => {
+              return elems[i].id ? items : "." + items
+            })
+            // console.log("allData =>",allData)
+            const parentElement = document.querySelector(allData.join(""));
+            // console.log(parentElement)
+            const nestedElements = parentElement.querySelectorAll("*");
+
+
+            console.log("nestedElements.length =>", nestedElements)
+
+            if (nestedElements.length) {
+              // Iterate over each nested element and log its class names
+              for (const element of nestedElements) {
+                var classNames = Array.from(element.classList);
+                if (!classNames.join(" ").includes("header") || !classNames.join(" ").includes("navbar")) {
+                  // console.log("elems[i] false =>", elems[i], classLoop1)
+                  elems[i].remove();
+                  break;
+                  // return;
+                }
+              };
+            } else if (parentElement) {
+              var classNames = Array.from(nestedElements.classList);
+              // console.log("classNames =>", classNames)
+              if (!classNames.join(" ").includes("header") || !classNames.join(" ").includes("navbar")) {
+                console.log("elems[i] false =>", elems[i], classLoop1)
+                elems[i].remove();
+              }
+            }
+          }
+        }
+      } catch (error) {
+        // console.log(error)
+      }
+    }
+  })
+
+}
+
+const checkImage = async (page) => {
+  let style = await page.$$eval("img", els => {
+    let style = ""
+    for (let i = 0; i < els.length; i++) {
+      let el = els[i];
+      let width = el.offsetWidth
+      let height = el.offsetHeight
+      if (height > 500) {
+        console.log(height);
+        el = el.parentElement
+        console.log(el);
+        el.style.display = "block"
+        el.style.pageBreakBefore = "always"
+        el.style.pageBreakInside = "avoid";
+        el.style.marginTop = "160px"
+      }
+    }
+  })
+
+  // await page.waitForTimeout(300000)
+}
+
+const checkSection = async (page) => {
+  let style = await page.$$eval("main", els => {
+    let style = ""
+    for (let i = 0; i < els.length; i++) {
+      let el = els[i];
+      let width = el.offsetWidth
+      let height = el.offsetHeight
+      console.log(height);
+      el = el.parentElement
+      el.style.pageBreakAfter = "always"
+      el.style.pageBreakInside = "avoid";
+      el.style.marginTop = "160px"
+    }
+  })
+
+  // await page.waitForTimeout(300000)
+}
+
+const findSectionDivs = async (page, el, index) => {
+  console.log(index);
+  if (index < 6) {
+    console.log("senasio => 1");
+    let divtags = await page.$$eval(`${el} > div`, (els) => {
+      let data = []
+      for (let i = 0; i < els.length; i++) {
+        const el = els[i];
+        console.log(el);
+        let cls = el.getAttribute("class")?.trim()
+        if (cls && cls.length) {
+          cls = cls.split(" ");
+          let parent = "";
+          for (let j = 0; j < cls.length; j++) {
+            const el = cls[j];
+            parent = parent + "." + el;
+          }
+          data.push(parent)
+        }
+        else {
+          let id = el.getAttribute('id')?.trim()
+          if (id) {
+            data.push("#" + id)
+          }
+          else {
+            data.push(null)
+          }
+        }
+      }
+      return data
+    }
+
+    );
+    console.log("divtags-1 =>", divtags);
+
+    if (divtags.length && divtags.length < 2) {
+      console.log("senasio => 1.1");
+      for (let i = 0; i < divtags.length; i++) {
+        let element = divtags[i];
+        if (element) {
+          findSectionDivs(page, element, index + 1);
+        } else {
+          findSectionDivs(page, `${el} > div > div`, index + 1);
+        }
+      }
+    } else if (divtags.length && divtags.length > 2) {
+      console.log("senasio => 1.2");
+      let style = "";
+      for (let k = 0; k < divtags.length; k++) {
+        const el = divtags[k];
+        console.log((el && (el.includes(".") || el.includes("#"))))
+        if (el && (el.includes(".") || el.includes("#"))) {
+          style =
+            style +
+            `
+          ${el} {
+            page-break-after: always; 
+            margin-top: 50px; 
+          }
+        `;
+        }
+      }
+      return await page.addStyleTag({
+        content: `
+      @page {
+        size: A4;
+      }
+      ${style}
+      `,
+      });
+    }
+  }
+  else {
+    console.log("senasio => 2");
+    check2Div(page, "body")
+  }
+};
+
+let check2Div = async (page, el) => {
+  let divtags = await page.$$eval(`${el} > div`, (els) => {
+    let data = []
+    for (let i = 0; i < els.length; i++) {
+      const el = els[i];
+      let cls = el.getAttribute("class")?.trim()
+      if (cls && cls.length) {
+        cls = cls.split(" ");
+        let parent = "";
+        for (let j = 0; j < cls.length; j++) {
+          const el = cls[j];
+          parent = parent + "." + el;
+        }
+        data.push(parent)
+      }
+      else {
+        let id = el.getAttribute('id')?.trim()
+        if (id) {
+          data.push("#" + id)
+        }
+        else {
+          continue;
+        }
+      }
+    }
+    return data
+  }
+
+  );
+  console.log("divtags-1 =>", divtags);
+  if (divtags.length && divtags.length < 1) {
+    console.log("senasio => 1.1");
+    for (let i = 0; i < divtags.length; i++) {
+      let element = divtags[i];
+      if (element) {
+        check2Div(page, element);
+      } else {
+        check2Div(page, `${el} > div > div`);
+      }
+    }
+  } else if (divtags.length && divtags.length > 2) {
+    console.log("senasio => 1.2");
+    let style = "";
+    for (let k = 0; k < divtags.length; k++) {
+      const el = divtags[k];
+      console.log((el && (el.includes(".") || el.includes("#"))))
+      if (el && (el.includes(".") || el.includes("#"))) {
+        style =
+          style +
+          `
+        ${el} {
+          page-break-after: always; 
+          margin-top: 50px; 
+        }
+      `;
+      }
+    }
+
+    console.log("style => ", style);
+
+    return await page.addStyleTag({
+      content: `
+    @page {
+      size: A4;
+    }
+    ${style}
+    `,
+    });
+  }
 }
