@@ -208,12 +208,23 @@ img {
   border-style: none;
   max-width: 200px;
   max-height: 200px;
+  content: "image";
+}
+
+i {
+  vertical-align: middle;
+  border-style: none;
+  max-width: 200px;
+  max-height: 200px;
+  content: "image";
 }
 
 /* line 257, ../usr/local/bundle/gems/bootstrap-4.6.2/assets/stylesheets/bootstrap/_reboot.scss */
 svg {
   overflow: hidden;
   vertical-align: middle;
+  max-width: 200px;
+  max-height: 200px;
 }
 
 /* line 269, ../usr/local/bundle/gems/bootstrap-4.6.2/assets/stylesheets/bootstrap/_reboot.scss */
