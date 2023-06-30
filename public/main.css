@@ -56,6 +56,13 @@ hr {
   overflow: visible;
 }
 
+.pageBreakBefore {
+  /* width: 100vw;
+  height: 100vh;
+  display: block; */
+  page-break-before: always;
+}
+
 /* line 92, ../usr/local/bundle/gems/bootstrap-4.6.2/assets/stylesheets/bootstrap/_reboot.scss */
 h1,
 h2,
