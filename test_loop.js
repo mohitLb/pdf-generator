@@ -1,4 +1,256 @@
-// 23-06-2023 Read More & Learn More if link in Button *************************************************************************************************************** */
+// // 22-06-2023 Internal, External & Inline css change *************************************************************************************************************** */
+
+// const puppeteer = require('puppeteer');
+
+// async function run() {
+
+//     const customArgs = [
+//         "--start-maximized",
+//         "--load-extension=C:/Users/Abdeali/AppData/Local/Google/Chrome/User Data/Profile 10/Extensions/edibdbjcniadpccecjdfdjjppcpchdlm/1.1.1_0",
+//     ];
+
+//     let browser = await puppeteer.launch({
+//         headless: false,
+//         defaultViewport: null,
+//         executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+//         ignoreDefaultArgs: ["--disable-extensions", "--enable-automation"],
+//         args: customArgs,
+//     });
+
+
+//     // const allUrls = ["https://humbleandfume.com/", "https://www.brookfieldproperties.com/en/who-we-are/leadership.html", "https://www.i3verticals.com/leadership/", "https://investors.crocs.com/governance/management/default.aspx", "https://www.nexteraenergy.com/company/leadership.html/company.html", "https://www.ttec.com/about-us/executive-team", "https://www.eildoncapital.com/people/", "https://bluglass.com/our-people/", "https://traton.com/en/company/executive-board.html", "https://amagroupltd.com/our-business/ama-group-board/", "https://www.adorebeautygroup.com.au/investor-centre/?page=board-of-directors", "https://www.pixium-vision.com/2019/09/lloyd-diamond/", "https://ir.gatx.com/governance/management/default.aspx", "https://ir.essentgroup.com/governance/management/default.aspx", "https://investors.esabcorporation.com/governance/executive-management/default.aspx", "https://www.automationnth.com/about-us/#team", "https://www.advatix.com/team", "https://jrvrgroup.com/james-river-insurance/our-company/leadership", "https://newsroom.fiserv.com/corporate-information/executive-leadership", "https://www.idacorpinc.com/about-us/our-leadership/default.aspx", "https://www.iaai.com/marketing/ritchiebros-investor-relations", "https://catalystcr.com/our-people/", "https://ir.applied.com/governance/corporate-management/default.aspx", "https://datalix.eu/", "https://bonobos.com/", "https://lakebrains.com/", "https://www.tcs.com/", "https://www.infosys.com/", "https://www.hcltech.com/", "https://www.tata.com/", "https://www.larsentoubro.com/", "https://www.pwc.com/", "https://www.mphasis.com/home.html"]
+//     const allUrls = ["https://humbleandfume.com/"]
+
+//     for (let i = 0; i < allUrls.length; i++) {
+//         try {
+//             const url = allUrls[i];
+//             const URL = url;
+//             const fileName = URL.split("/")[2]
+//             let page = await browser.newPage();
+
+//             await page.goto(URL, { waitUntil: "networkidle0" });
+
+//             // await page.waitForTimeout(30000)
+
+
+//             async function test_cssPage(link) {
+//                 let pageInternal = await browser.newPage();
+
+//                 await pageInternal.goto(link, { timeout: 0 });
+//                 console.log("Getting in");
+
+//                 await pageInternal.waitForTimeout(2000)
+
+//                 const offsetHeight = await pageInternal.evaluate(() => {
+//                     const body = document.querySelector("pre");
+//                     console.log("body =>", body);
+//                     return body.innerText;
+//                 });
+
+
+//                 await pageInternal.close();
+
+//                 return offsetHeight;
+//             }
+
+//             await page.exposeFunction("test_cssPage", test_cssPage);
+
+
+//             await page.evaluate(async () => {
+
+//                 let styles = document.querySelectorAll('style')
+
+//                 for (let i = 0; i < styles.length; i++) {
+//                     const el = styles[i];
+//                     styles[i].remove()
+//                     document.head.appendChild(el)
+//                 }
+
+//                 let links = document.querySelectorAll("link")
+
+//                 var flag = 1
+
+//                 for (let i = 0; i < links.length; i++) {
+//                     if (links[i].rel === "stylesheet") {
+//                         var body = await test_cssPage(links[i].getAttribute("href"))
+//                         const styleElement = document.createElement('style');
+//                         styleElement.innerHTML = `${body}`;
+//                         document.head.appendChild(styleElement);
+//                         console.log("body =>", styleElement);
+//                         // setTimeout(() => {
+//                         links[i].remove()
+//                         flag = flag + 1
+//                         // }, 2000);
+//                     } else {
+//                         links[i].remove()
+//                     }
+//                 }
+//             })
+
+
+//             await page.waitForTimeout(10000)
+
+
+//             await page.evaluate(() => {
+//                 let allels = document.querySelectorAll("*[style]");
+//                 // let links = document.querySelectorAll("link")
+//                 let scripts = document.querySelectorAll('script')
+
+
+//                 for (let i = 0; i < scripts.length; i++) {
+//                     const link = scripts[i];
+//                     link.remove()
+//                 }
+
+//                 for (let i = 0; i < allels.length; i++) {
+//                     const el = allels[i];
+//                     // console.log(el)
+//                     for (let r = 0; r < el.style.length; r++) {
+//                         const element = el.style[r];
+//                         // console.log("el.style.display =>", el.style.display);
+//                         if (
+//                             element !== "flex-display" &&
+//                             element !== "flex-direction" &&
+//                             element !== "flex-wrap" &&
+//                             element !== "flex-flow" &&
+//                             element !== "justify-content" &&
+//                             element !== "align-items" &&
+//                             element !== "gap" &&
+//                             element !== "row-gap" &&
+//                             element !== "column-gap" &&
+//                             !element.includes("margin") &&
+//                             !element.includes("padding")
+//                         ) {
+//                             // console.log("margin" ,element.includes("margin"));
+//                             // console.log("element =>", element, el.style[`${element}`])
+//                             el.style[`${element}`] = ""
+//                         } else if (
+//                             el.style.display !== "grid" &&
+//                             el.style.display !== "flex" &&
+//                             el.style.display !== "inline" &&
+//                             el.style.display !== "inline-block"
+//                         ) {
+//                             // console.log("element =>", element, el.style[`${element}`])
+//                             el.style[`${element}`] = ""
+//                         }
+//                     }
+//                 }
+
+//                 var allClasses = [];
+
+//                 var allElements = document.querySelectorAll('*');
+
+//                 const allowedProperties = [
+//                     'flex-direction',
+//                     'flex-wrap',
+//                     'flex-flow',
+//                     'justify-content',
+//                     'align-items',
+//                     'gap',
+//                     'row-gap',
+//                     'column-gap',
+
+//                     'margin',
+//                     'margin-top',
+//                     'margin-bottom',
+//                     'margin-right',
+//                     'margin-left',
+
+//                     'padding',
+//                     'padding-top',
+//                     'padding-bottom',
+//                     'padding-right',
+//                     'padding-left',
+//                     'display'
+//                 ];
+
+//                 const allowedDisplayValues = [
+//                     'flex',
+//                     'grid',
+//                     'inline',
+//                     'inline-block'
+//                 ];
+
+
+//                 const styleSheetList = document.styleSheets;
+
+//                 const newStyleElement = document.createElement('style');
+
+//                 console.log("styleSheetList.length =>", styleSheetList.length);
+
+//                 for (let i = 0; i < styleSheetList.length; i++) {
+//                     const styleSheet = styleSheetList[i];
+
+//                     const rules = styleSheet.cssRules || styleSheet.rules; // Handle different browser compatibility
+
+//                     for (let j = 0; j < rules.length; j++) {
+//                         const rule = rules[j];
+
+//                         // Check if the rule is a CSSStyleRule and not a CSSImportRule or other type of rule
+//                         if (rule instanceof CSSStyleRule) {
+//                             const { style } = rule;
+
+//                             // Remove properties that are not in the allowed list
+//                             for (let k = style.length - 1; k >= 0; k--) {
+//                                 const property = style[k];
+
+//                                 if (!allowedProperties.includes(property)) {
+//                                     style.removeProperty(property);
+//                                 }
+//                             }
+
+//                             // Check display property and remove if not in allowed display values
+//                             const display = style.getPropertyValue('display');
+//                             if (!allowedDisplayValues.includes(display)) {
+//                                 style.removeProperty('display');
+//                             }
+
+//                             // Append the modified rule to the new style element
+//                             newStyleElement.appendChild(
+//                                 document.createTextNode(`${rule.selectorText} { ${style.cssText} }`)
+//                             );
+//                         }
+//                     }
+//                 }
+//                 document.head.appendChild(newStyleElement);
+
+//                 setTimeout(() => {
+//                     let styles = document.querySelectorAll('style')
+
+//                     for (let i = 0; i < styles.length - 1; i++) {
+//                         const el = styles[i];
+//                         el.remove()
+//                     }
+//                 }, 1000);
+//             })
+//             await page.waitForTimeout(30000)
+//             await page.emulateMediaType("print");
+//             // const pdf = await page.pdf({
+//             //     path: `pdfs/${fileName}.pdf`,
+//             //     margin: { top: "20px", right: "20px", bottom: "20px", left: "20px" },
+//             //     printBackground: true,
+//             //     displayHeaderFooter: true,
+//             //     format: "A4",
+//             //     scale: 0.5
+//             // });
+
+//             await page.waitForTimeout(2000)
+//             // await page.close();
+//             console.log("Done");
+
+//         } catch (error) {
+//             console.log(error);
+//         }
+//     }
+
+//     // await browser.close();
+// }
+
+// run();
+// //*************************************************************************************************************** */
+
+
+// 03-07-2023 old code with styles merge *************************************************************************************************************** */
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 
@@ -19,8 +271,8 @@ async function run() {
     });
 
 
-    // const allUrls = ["https://www.pixium-vision.com/board-of-directors-2/","https://humbleandfume.com/", "https://www.brookfieldproperties.com/en/who-we-are/leadership.html", "https://www.i3verticals.com/leadership/", "https://investors.crocs.com/governance/management/default.aspx", "https://www.nexteraenergy.com/company/leadership.html/company.html", "https://www.ttec.com/about-us/executive-team", "https://www.eildoncapital.com/people/", "https://bluglass.com/our-people/", "https://traton.com/en/company/executive-board.html", "https://amagroupltd.com/our-business/ama-group-board/", "https://www.adorebeautygroup.com.au/investor-centre/?page=board-of-directors", "https://www.pixium-vision.com/2019/09/lloyd-diamond/", "https://ir.gatx.com/governance/management/default.aspx", "https://ir.essentgroup.com/governance/management/default.aspx", "https://investors.esabcorporation.com/governance/executive-management/default.aspx", "https://www.automationnth.com/about-us/#team", "https://www.advatix.com/team", "https://jrvrgroup.com/james-river-insurance/our-company/leadership", "https://newsroom.fiserv.com/corporate-information/executive-leadership", "https://www.idacorpinc.com/about-us/our-leadership/default.aspx", "https://www.iaai.com/marketing/ritchiebros-investor-relations", "https://catalystcr.com/our-people/", "https://ir.applied.com/governance/corporate-management/default.aspx", "https://datalix.eu/", "https://bonobos.com/", "https://lakebrains.com/", "https://www.tcs.com/", "https://www.infosys.com/", "https://www.hcltech.com/", "https://www.tata.com/", "https://www.larsentoubro.com/", "https://www.pwc.com/", "https://www.mphasis.com/home.html"]
-    const allUrls = ["https://www.mphasis.com/home.html"]
+    const allUrls = ["https://www.pixium-vision.com/board-of-directors-2/", "https://humbleandfume.com/", "https://www.brookfieldproperties.com/en/who-we-are/leadership.html", "https://www.i3verticals.com/leadership/", "https://investors.crocs.com/governance/management/default.aspx", "https://www.nexteraenergy.com/company/leadership.html/company.html", "https://www.ttec.com/about-us/executive-team", "https://www.eildoncapital.com/people/", "https://bluglass.com/our-people/", "https://traton.com/en/company/executive-board.html", "https://amagroupltd.com/our-business/ama-group-board/", "https://www.adorebeautygroup.com.au/investor-centre/?page=board-of-directors", "https://www.pixium-vision.com/2019/09/lloyd-diamond/", "https://ir.gatx.com/governance/management/default.aspx", "https://ir.essentgroup.com/governance/management/default.aspx", "https://investors.esabcorporation.com/governance/executive-management/default.aspx", "https://www.automationnth.com/about-us/#team", "https://www.advatix.com/team", "https://jrvrgroup.com/james-river-insurance/our-company/leadership", "https://newsroom.fiserv.com/corporate-information/executive-leadership", "https://www.idacorpinc.com/about-us/our-leadership/default.aspx", "https://www.iaai.com/marketing/ritchiebros-investor-relations", "https://catalystcr.com/our-people/", "https://ir.applied.com/governance/corporate-management/default.aspx", "https://datalix.eu/", "https://bonobos.com/", "https://lakebrains.com/", "https://www.tcs.com/", "https://www.infosys.com/", "https://www.hcltech.com/", "https://www.tata.com/", "https://www.larsentoubro.com/", "https://www.pwc.com/", "https://www.mphasis.com/home.html"]
+    // const allUrls = ["https://www.brookfieldproperties.com/en/who-we-are/leadership.html"]
 
     for (let i = 0; i < allUrls.length; i++) {
         try {
@@ -31,46 +283,64 @@ async function run() {
             let page = await browser.newPage();
             await page.setDefaultTimeout(0)
             await page.setDefaultNavigationTimeout(0)
-            // await page.setViewport({ width: 1920, height: 1080 });
-            // await page.setRequestInterception(true);
-
-            // page.on('request', (req) => {
-            //     if (req.resourceType() == 'stylesheet') {
-            //         req.abort();
-            //     }
-            //     else {
-            //         req.continue();
-            //     }
-            // });
 
             await page.goto(URL, { waitUntil: "networkidle0", timeout: 0 });
-
-            // await page.waitForTimeout(10000)
-            // await checkRemovePopups(page)
 
             await checkVideo(page)
 
             await page.waitForTimeout(5000)
 
+            async function test_cssPage(link) {
+                let pageInternal = await browser.newPage();
+                try {
+                    await pageInternal.goto(link, { timeout: 0 });
+                    console.log("Getting in =>", link);
+
+                    await pageInternal.waitForTimeout(2000)
+
+                    const offsetHeight = await pageInternal.evaluate(() => {
+                        const body = document.querySelector("pre");
+                        console.log("body =>", body);
+                        return body.innerText;
+                    });
+
+                    await pageInternal.close();
+
+                    return offsetHeight;
+                } catch (error) {
+                    console.log("Error =>", error);
+                    await pageInternal.close();
+                    return null
+                }
+            }
+
+            await page.exposeFunction("test_cssPage", test_cssPage);
+
             async function test_newPage(link) {
                 let pageInternal = await browser.newPage();
+                try {
 
-                await pageInternal.goto(link, { timeout: 0 });
-                console.log("Getting in");
+                    await pageInternal.goto(link, { timeout: 0 });
+                    console.log("Getting in");
 
-                await pageInternal.waitForTimeout(5000)
-                await autoScroll(pageInternal);
+                    await pageInternal.waitForTimeout(5000)
+                    await autoScroll(pageInternal);
 
-                const offsetHeight = await pageInternal.evaluate(() => {
-                    const body = document.body;
-                    console.log("offsetHeight =>", body);
-                    return body.offsetHeight;
-                });
+                    const offsetHeight = await pageInternal.evaluate(() => {
+                        const body = document.body;
+                        console.log("offsetHeight =>", body);
+                        return body.offsetHeight;
+                    });
 
+                    await pageInternal.close();
 
-                await pageInternal.close();
+                    return offsetHeight;
 
-                return offsetHeight;
+                } catch (error) {
+                    console.log("Error =>", error);
+                    await pageInternal.close();
+                    return ""
+                }
             }
 
             await page.exposeFunction("test_newPage", test_newPage);
@@ -90,24 +360,44 @@ async function run() {
                 })
             });
 
-            await page.evaluate(() => {
-                let allels = document.querySelectorAll("*")
-                let links = document.querySelectorAll("link")
-                let scripts = document.querySelectorAll('script')
+            await page.evaluate(async () => {
+
                 let styles = document.querySelectorAll('style')
+
+                for (let i = 0; i < styles.length; i++) {
+                    const el = styles[i];
+                    styles[i].remove()
+                    document.head.appendChild(el)
+                }
+
+                let links = document.querySelectorAll("link")
+
+                console.log(links);
+
+                for (let i = 0; i < links.length; i++) {
+                    if (links[i].rel && links[i].rel === "stylesheet" && links[i].getAttribute("href").includes("https")) {
+
+                        var body = await test_cssPage(links[i].getAttribute("href"))
+                        const styleElement = document.createElement('style');
+                        styleElement.innerHTML = `${body}`;
+                        document.head.appendChild(styleElement);
+                        console.log("body =>", styleElement);
+                        links[i].remove()
+                    } else {
+                        links[i].remove()
+                    }
+                }
+            })
+
+            await page.evaluate(() => {
+                let allelss = document.querySelectorAll("*")
+                let scripts = document.querySelectorAll('script')
                 let headers = document.querySelectorAll('header')
                 let footers = document.querySelectorAll('footer')
 
-                const elements = document.body.getElementsByTagName('*');
-
-                setInterval(() => {
-                    for (let i = 0; i < elements.length; i++) {
-                        elements[i].removeAttribute('style');
-                    }
-                }, 500);
 
                 // Loop through each element
-                allels.forEach(element => {
+                allelss.forEach(element => {
                     // Get all attributes of the element
                     const attributes = element.attributes;
 
@@ -117,7 +407,7 @@ async function run() {
                         const attributeValue = attribute.value;
 
                         // Check if the attribute value contains the word "sticky"
-                        if (attributeValue && attributeValue.includes('sticky')) {
+                        if (attributeValue && attributeValue === 'sticky') {
                             // Remove the element
                             element.remove();
                             break; // Exit the loop once an attribute is found with the word "sticky"
@@ -125,19 +415,6 @@ async function run() {
                     }
                 });
 
-                for (let i = 0; i < allels.length; i++) {
-                    const el = allels[i];
-                    el.removeAttribute("style")
-                }
-
-                for (let i = 0; i < styles.length; i++) {
-                    const el = styles[i];
-                    el.remove()
-                }
-                for (let i = 0; i < links.length; i++) {
-                    const link = links[i];
-                    link.remove()
-                }
                 for (let i = 0; i < scripts.length; i++) {
                     const link = scripts[i];
                     link.remove()
@@ -150,11 +427,124 @@ async function run() {
                     const footer = footers[i];
                     footer.remove()
                 }
-            })
 
-            // path, can be relative or absolute path
-            // await page.addScriptTag({ path: 'public/jquery.min.js' })
-            // await page.addScriptTag({ path: 'public/algo.js' })
+                let allels = document.querySelectorAll("*[style]");
+
+                for (let i = 0; i < allels.length; i++) {
+                    const el = allels[i];
+                    // console.log(el)
+                    for (let r = 0; r < el.style.length; r++) {
+                        const element = el.style[r];
+                        // console.log("el.style.display =>", el.style.display);
+                        if (
+                            element !== "flex-display" &&
+                            element !== "flex-direction" &&
+                            element !== "flex-wrap" &&
+                            element !== "flex-flow" &&
+                            element !== "justify-content" &&
+                            element !== "align-items" &&
+                            element !== "gap" &&
+                            element !== "row-gap" &&
+                            element !== "column-gap" &&
+                            !element.includes("margin") &&
+                            !element.includes("padding")
+                        ) {
+                            el.style[`${element}`] = ""
+                        } else if (
+                            el.style.display !== "grid" &&
+                            el.style.display !== "flex" &&
+                            el.style.display !== "inline" &&
+                            el.style.display !== "inline-block"
+                        ) {
+                            el.style[`${element}`] = ""
+                        }
+                    }
+                }
+
+
+                const allowedProperties = [
+                    'flex-direction',
+                    'flex-wrap',
+                    'flex-flow',
+                    'justify-content',
+                    'align-items',
+                    'gap',
+                    'row-gap',
+                    'column-gap',
+
+                    'margin',
+                    'margin-top',
+                    'margin-bottom',
+                    'margin-right',
+                    'margin-left',
+
+                    'padding',
+                    'padding-top',
+                    'padding-bottom',
+                    'padding-right',
+                    'padding-left',
+                    'display'
+                ];
+
+                const allowedDisplayValues = [
+                    'flex',
+                    'grid',
+                    'inline',
+                    'inline-block'
+                ];
+
+
+                const styleSheetList = document.styleSheets;
+
+                const newStyleElement = document.createElement('style');
+
+                console.log("styleSheetList.length =>", styleSheetList.length);
+
+                for (let i = 0; i < styleSheetList.length; i++) {
+                    const styleSheet = styleSheetList[i];
+
+                    const rules = styleSheet.cssRules || styleSheet.rules; // Handle different browser compatibility
+
+                    for (let j = 0; j < rules.length; j++) {
+                        const rule = rules[j];
+
+                        // Check if the rule is a CSSStyleRule and not a CSSImportRule or other type of rule
+                        if (rule instanceof CSSStyleRule) {
+                            const { style } = rule;
+
+                            // Remove properties that are not in the allowed list
+                            for (let k = style.length - 1; k >= 0; k--) {
+                                const property = style[k];
+
+                                if (!allowedProperties.includes(property)) {
+                                    style.removeProperty(property);
+                                }
+                            }
+
+                            // Check display property and remove if not in allowed display values
+                            const display = style.getPropertyValue('display');
+                            if (!allowedDisplayValues.includes(display)) {
+                                style.removeProperty('display');
+                            }
+
+                            // Append the modified rule to the new style element
+                            newStyleElement.appendChild(
+                                document.createTextNode(`${rule.selectorText} { ${style.cssText} }`)
+                            );
+                        }
+                    }
+                }
+                document.head.appendChild(newStyleElement);
+
+                setTimeout(() => {
+                    let styles = document.querySelectorAll('style')
+
+                    for (let i = 0; i < styles.length - 1; i++) {
+                        const el = styles[i];
+                        el.remove()
+                    }
+                }, 1000);
+            })
 
             await page.addStyleTag({ path: 'public/main.css' })
 
@@ -179,8 +569,7 @@ async function run() {
                 console.log("all links =>", links);
                 for (const link of links) {
                     var bodyBaseURI = document.querySelector('body').baseURI.split("/")[2];
-                    // bodyBaseURI = bodyBaseURI.toLowerCase().includes("www.") ? bodyBaseURI.replace(/^(https?:\/\/)?(www\.)?/, '$1') : bodyBaseURI
-                    // console.log("link.getAttribute(href) =>", bodyBaseURI.replace(/^(https?:\/\/)?(www\.)?/, '$1'));
+
                     if (!link.querySelector('a') && (link.innerText.toLowerCase().includes("read more") || link.innerText.toLowerCase().includes("learn more") || link.innerText.toLowerCase().includes("more"))) {
                         if (link.getAttribute("href") && link.getAttribute("href").includes(bodyBaseURI.replace(/^(https?:\/\/)?(www\.)?/, '$1'))) {
                             const allLinksFilter = await allLinks.filter(items => items === link.getAttribute("href"));
@@ -197,6 +586,7 @@ async function run() {
                                 iframe.classList.add("pageBreakBefore")
                                 iframe.width = "100%";
                                 iframe.height = height;
+                                iframe.style.marginTop = "20px"
                                 iframe.frameBorder = "0"
                                 iframe.scrolling = "no"
 
@@ -254,9 +644,6 @@ async function run() {
                 body.classList.add("direction-ltr")
                 body.id = "pf-body"
 
-                // body = body.innerHTML
-                // const parentElement = `<div id = "printfriendly" class = "pf-12" ><div id="pf-print-area"><div id="pf-content" orig-style="null" style="direction: ltr">${body}</div></div></div>`;
-                // document.body.innerHTML = parentElement
             }, mainStyles);
 
             await page.waitForTimeout(2000)
@@ -270,7 +657,7 @@ async function run() {
 
                     for (const innerElement of elements) {
                         for (var i = 0, atts = innerElement.attributes, n = atts.length, arr = []; i < n; i++) {
-                            if (atts[i].nodeValue.toLocaleLowerCase() === "next page" || atts[i].nodeValue.toLocaleLowerCase() === "next-page") {
+                            if (atts[i].nodeValue.toLocaleLowerCase() === "next" || atts[i].nodeValue.toLocaleLowerCase() === "next page" || atts[i].nodeValue.toLocaleLowerCase() === "next-page") {
                                 attri = true
                             }
                         }
@@ -281,127 +668,133 @@ async function run() {
                         if (attri === true) {
                             for (const innerElement of elements) {
                                 for (var i = 0, atts = innerElement.attributes, n = atts.length, arr = []; i < n; i++) {
-                                    if (atts[i].nodeValue.toLocaleLowerCase() === "next page" || atts[i].nodeValue.toLocaleLowerCase() === "next-page") {
-                                        var elementHrefData = async () => {
-                                            if (innerElement.tagName === "A" && !innerElement.getAttribute("href").includes("https")) {
-                                                console.log("The element is an anchor (<a>) element.");
-                                                var parent = innerElement
-                                                const loop = async () => {
-                                                    if (parent.offsetHeight < 500) {
-                                                        parent = await parent.parentElement
-                                                        loop()
-                                                    } else {
-                                                        console.log("element =>", innerElement)
+                                    if (atts[i].nodeValue.toLocaleLowerCase() === "next" || atts[i].nodeValue.toLocaleLowerCase() === "next page" || atts[i].nodeValue.toLocaleLowerCase() === "next-page") {
+                                        if (innerElement.href && !innerElement.href.toLocaleLowerCase().includes("https")) {
+                                            console.log("atts[i].nodeValue.toLocaleLowerCase() =>", innerElement.href.toLocaleLowerCase().includes("https"));
+                                            var elementHrefData = async () => {
+                                                if (innerElement.tagName === "A" && !innerElement.getAttribute("href").includes("https")) {
+                                                    console.log("The element is an anchor (<a>) element.");
+                                                    var parent = innerElement
+                                                    const loop = async () => {
+                                                        if (parent.offsetHeight < 500) {
+                                                            parent = await parent.parentElement
+                                                            loop()
+                                                        } else {
+                                                            console.log("element =>", innerElement)
 
-                                                        var timeEnd;
+                                                            var timeEnd;
 
-                                                        // Select the target node (in this case, the <body> element)
-                                                        const observerLoop = async (i) => {
-                                                            setTimeout(() => {
-                                                                var targetNode = parent;
-                                                                console.log("count => ", i);
+                                                            // Select the target node (in this case, the <body> element)
+                                                            const observerLoop = async (i) => {
+                                                                setTimeout(() => {
+                                                                    var targetNode = parent;
+                                                                    console.log("count => ", i);
 
-                                                                // Create a new instance of the MutationObserver
-                                                                var observer = new MutationObserver(function (mutationsList, observer) {
-                                                                    // Iterate through the list of mutations
-                                                                    if (mutationsList) {
-                                                                        console.log("atts[i].nodeName =>", innerElement.parentElement);
-                                                                        clearTimeout(timeEnd);
-                                                                        observerLoop(i + 1);
-                                                                        observer.disconnect();
-                                                                    }
-                                                                });
-
-                                                                // Configuration options for the observer (e.g., which types of mutations to observe)
-                                                                var observerConfig = { attributes: true, childList: true, subtree: true };
-
-                                                                // Start observing the target node with the specified configuration
-                                                                observer.observe(targetNode, observerConfig);
-
-                                                                console.log("Click =>", parent);
-
-                                                                var div1 = document.createElement("div");
-
-                                                                div1.classList.add("pageBreakBefore")
-
-                                                                // Create the <iframe> element
-                                                                var iframe = document.createElement("iframe");
-
-                                                                iframe.name = `addedIframe-${i}`
-                                                                iframe.width = "100%";
-
-                                                                iframe.height = parent.offsetHeight + 200;
-                                                                iframe.frameBorder = "0"
-                                                                iframe.scrolling = "no"
-
-
-                                                                // Create the <div> element
-                                                                var div2 = document.createElement("div");
-
-                                                                // Set attributes for the <div>
-                                                                div2.textContent = "This is a div element.";
-
-                                                                // Copy the contents of the original <div> to the new <div> element
-                                                                div2.innerHTML = parent.innerHTML;
-
-                                                                // div2.style.pageBreakBefore = "always"
-
-                                                                // Add event listener for iframe load event
-                                                                iframe.addEventListener("load", function () {
-                                                                    // Access the <iframe> contentDocument
-                                                                    var iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
-
-                                                                    iframeDocument.body.appendChild(div2);
-
-                                                                    // Remove the header element
-                                                                    var header = iframeDocument.querySelector("header"); // Replace "header" with the selector for your header element
-                                                                    if (header) {
-                                                                        header.parentNode.removeChild(header);
-                                                                    }
-
-                                                                    // Remove the footer element
-                                                                    var footer = iframeDocument.querySelector("footer"); // Replace "footer" with the selector for your footer element
-                                                                    if (footer) {
-                                                                        footer.parentNode.removeChild(footer);
-                                                                    }
-
-                                                                    // Remove elements with class including "header" or "footer"
-                                                                    var elements = iframeDocument.querySelectorAll("[class*='header'], [class*='footer']");
-                                                                    console.log("elements =>", elements);
-
-                                                                    elements.forEach(function (element) {
-                                                                        if (element.nodeName === "DIV" || element.nodeName === "SECTION") {
-                                                                            element.parentNode.removeChild(element);
+                                                                    // Create a new instance of the MutationObserver
+                                                                    var observer = new MutationObserver(function (mutationsList, observer) {
+                                                                        // Iterate through the list of mutations
+                                                                        if (mutationsList) {
+                                                                            console.log("atts[i].nodeName =>", innerElement.parentElement);
+                                                                            clearTimeout(timeEnd);
+                                                                            observerLoop(i + 1);
+                                                                            observer.disconnect();
                                                                         }
                                                                     });
 
-                                                                    const styleElement = iframeDocument.createElement('style');
-                                                                    styleElement.innerHTML = `${mainStyles}`;
+                                                                    // Configuration options for the observer (e.g., which types of mutations to observe)
+                                                                    var observerConfig = { attributes: true, childList: true, subtree: true };
 
-                                                                    iframeDocument.head.appendChild(styleElement);
-                                                                    timeEnd = setTimeout(() => {
-                                                                        console.log("Loop done");
-                                                                        return resolve()
-                                                                    }, 20000);
-                                                                });
+                                                                    // Start observing the target node with the specified configuration
+                                                                    observer.observe(targetNode, observerConfig);
 
-                                                                // Append the <iframe> element to the <body>
-                                                                div1.appendChild(iframe);
-                                                                document.body.appendChild(div1);
+                                                                    console.log("Click =>", parent);
 
-                                                                innerElement.click()
-                                                            }, 10000);
+                                                                    var div1 = document.createElement("div");
+
+                                                                    div1.classList.add("pageBreakBefore")
+
+                                                                    // Create the <iframe> element
+                                                                    var iframe = document.createElement("iframe");
+
+                                                                    iframe.name = `addedIframe-${i}`
+                                                                    iframe.width = "100%";
+                                                                    iframe.style.marginTop = "20px"
+
+                                                                    iframe.height = parent.offsetHeight + 200;
+                                                                    iframe.frameBorder = "0"
+                                                                    iframe.scrolling = "no"
+
+
+                                                                    // Create the <div> element
+                                                                    var div2 = document.createElement("div");
+
+                                                                    // Set attributes for the <div>
+                                                                    div2.textContent = "This is a div element.";
+
+                                                                    // Copy the contents of the original <div> to the new <div> element
+                                                                    div2.innerHTML = parent.innerHTML;
+
+                                                                    // div2.style.pageBreakBefore = "always"
+
+                                                                    // Add event listener for iframe load event
+                                                                    iframe.addEventListener("load", function () {
+                                                                        // Access the <iframe> contentDocument
+                                                                        var iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+
+                                                                        iframeDocument.body.appendChild(div2);
+
+                                                                        // Remove the header element
+                                                                        var header = iframeDocument.querySelector("header"); // Replace "header" with the selector for your header element
+                                                                        if (header) {
+                                                                            header.parentNode.removeChild(header);
+                                                                        }
+
+                                                                        // Remove the footer element
+                                                                        var footer = iframeDocument.querySelector("footer"); // Replace "footer" with the selector for your footer element
+                                                                        if (footer) {
+                                                                            footer.parentNode.removeChild(footer);
+                                                                        }
+
+                                                                        // Remove elements with class including "header" or "footer"
+                                                                        var elements = iframeDocument.querySelectorAll("[class*='header'], [class*='footer']");
+                                                                        console.log("elements =>", elements);
+
+                                                                        elements.forEach(function (element) {
+                                                                            if (element.nodeName === "DIV" || element.nodeName === "SECTION") {
+                                                                                element.parentNode.removeChild(element);
+                                                                            }
+                                                                        });
+
+                                                                        const styleElement = iframeDocument.createElement('style');
+                                                                        styleElement.innerHTML = `${mainStyles}`;
+
+                                                                        iframeDocument.head.appendChild(styleElement);
+                                                                        timeEnd = setTimeout(() => {
+                                                                            console.log("Loop done");
+                                                                            return resolve()
+                                                                        }, 20000);
+                                                                    });
+
+                                                                    // Append the <iframe> element to the <body>
+                                                                    div1.appendChild(iframe);
+                                                                    document.body.appendChild(div1);
+
+                                                                    innerElement.click()
+                                                                }, 10000);
+                                                            }
+                                                            observerLoop(1)
                                                         }
-                                                        observerLoop(1)
                                                     }
+                                                    await loop()
+                                                } else {
+                                                    console.log("The element is not an anchor element.");
+                                                    return resolve()
                                                 }
-                                                await loop()
-                                            } else {
-                                                console.log("The element is not an anchor element.");
-                                                return resolve()
                                             }
+                                            elementHrefData()
+                                        } else {
+                                            return resolve()
                                         }
-                                        elementHrefData()
                                     }
                                 }
                             }
@@ -414,27 +807,6 @@ async function run() {
 
             await page.waitForTimeout(2000)
 
-            // // Add styles to the iframe's internal style
-            // await page.evaluate(() => {
-            //     var iframes = document.querySelectorAll('iframe'); // Select the iframe based on your specific selector
-
-            //     // Iterate over the iframes to find the one with a name containing specific words
-            //     var targetIframe = [];
-            //     for (var i = 0; i < iframes.length; i++) {
-            //         var iframe = iframes[i];
-            //         var name = iframe.getAttribute('name');
-
-            //         // Check if the name contains specific words
-            //         if (name && name.includes('addedIframe')) {
-            //             targetIframe.push(iframe);
-            //         }
-            //     }
-            //     if (targetIframe.length) {
-            //         targetIframe[targetIframe.length - 1].remove()
-            //     }
-            //     console.log("iframe =>", targetIframe);
-            // });
-
             await autoScroll(page);
             await page.waitForTimeout(2000)
             await checkSection(page)
@@ -445,21 +817,21 @@ async function run() {
                 await findSectionDivs(page, "body", 1, "parent");
             }
             await checkImage(page)
-            await page.waitForTimeout(2000)
+            await page.waitForTimeout(5000)
             await page.emulateMediaType("print");
-            const pdf = await page.pdf({
+            await page.pdf({
                 path: `pdfs/${fileName}.pdf`,
                 margin: { top: "20px", right: "20px", bottom: "20px", left: "20px" },
                 printBackground: true,
-                displayHeaderFooter: true,
+                displayHeaderFooter: false,
                 format: "A4",
-                scale: 0.5
+                scale: 0.3
             });
 
             await page.waitForTimeout(2000)
             await removePage(fileName).catch((err) => console.log(err));
             await page.waitForTimeout(2000)
-            // await page.close();
+            await page.close();
             console.log("Done");
 
         } catch (error) {
@@ -467,7 +839,7 @@ async function run() {
         }
     }
 
-    // await browser.close();
+    await browser.close();
 }
 
 run();
@@ -484,8 +856,8 @@ const checkImage = async (page) => {
             // el.after(span);
             // el.style.maxWidth = "500px"
             // el.style.maxHeight = "500px"
-            const br = document.createElement("br")
-            el.parentElement.after(br)
+            // const br = document.createElement("br")
+            // el.parentElement.after(br)
         }
     })
 
