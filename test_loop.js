@@ -271,7 +271,106 @@ async function run() {
     });
 
 
-    const allUrls = ["https://www.pixium-vision.com/board-of-directors-2/", "https://humbleandfume.com/", "https://www.brookfieldproperties.com/en/who-we-are/leadership.html", "https://www.i3verticals.com/leadership/", "https://investors.crocs.com/governance/management/default.aspx", "https://www.nexteraenergy.com/company/leadership.html/company.html", "https://www.ttec.com/about-us/executive-team", "https://www.eildoncapital.com/people/", "https://bluglass.com/our-people/", "https://traton.com/en/company/executive-board.html", "https://amagroupltd.com/our-business/ama-group-board/", "https://www.adorebeautygroup.com.au/investor-centre/?page=board-of-directors", "https://www.pixium-vision.com/2019/09/lloyd-diamond/", "https://ir.gatx.com/governance/management/default.aspx", "https://ir.essentgroup.com/governance/management/default.aspx", "https://investors.esabcorporation.com/governance/executive-management/default.aspx", "https://www.automationnth.com/about-us/#team", "https://www.advatix.com/team", "https://jrvrgroup.com/james-river-insurance/our-company/leadership", "https://newsroom.fiserv.com/corporate-information/executive-leadership", "https://www.idacorpinc.com/about-us/our-leadership/default.aspx", "https://www.iaai.com/marketing/ritchiebros-investor-relations", "https://catalystcr.com/our-people/", "https://ir.applied.com/governance/corporate-management/default.aspx", "https://datalix.eu/", "https://bonobos.com/", "https://lakebrains.com/", "https://www.tcs.com/", "https://www.infosys.com/", "https://www.hcltech.com/", "https://www.tata.com/", "https://www.larsentoubro.com/", "https://www.pwc.com/", "https://www.mphasis.com/home.html"]
+    // // "Single page toggle sections"
+    // const allUrls = [
+    //     "https://investor.marketaxess.com/governance/executive-management/default.aspx",
+    //     "https://investors.paycom.com/Corporate-Governance/Board-of-Directors/default.aspx",
+    //     "https://investors.principal.com/investor-relations/our-business/leadership/senior-management-bios/default.aspx",
+    //     "https://investor.marketaxess.com/governance/board-of-directors/default.aspx",
+    //     "https://investors.principal.com/investor-relations/our-business/leadership/board-of-director-bios/default.aspx",
+    //     "https://ir.maac.com/overview/directors-and-management/default.aspx",
+    //     "https://ir.mtch.com/corporate-governance/board-of-directors/default.aspx",
+    //     "https://ir.questdiagnostics.com/governance/management-team/default.aspx",
+    //     "https://ir.questdiagnostics.com/governance/board-of-directors/default.aspx",
+    //     "https://ir.dish.com/corporate-governance/board-of-directors",
+    //     "https://investor.dollargeneral.com/websites/dollargeneral/English/4000/management-team.html",
+    //     "https://investor.dollargeneral.com/websites/dollargeneral/English/5100/board-of-directors.html",
+    //     "https://ir.ea.com/corporate-governance/board-of-directors/default.aspx",
+    //     "https://investors.eastman.com/governance/board-of-directors/default.aspx",
+    //     "https://www.elcompanies.com/en/investors/corporate-governance/board-of-directors",
+    //     "https://investors.equityapartments.com/overview/officers-and-trustees/default.aspx",
+    //     "https://investors.essexapartmenthomes.com/corporate-information/officers-directors/default.aspx",
+    //     "https://investors.etsy.com/governance/board-of-directors/default.aspx",
+    //     "https://investor.expeditors.com/corporate-governance/board-of-directors-and-board-diversity-matrix",
+    //     "https://investor.fastenal.com/governance/management/default.aspx",
+    //     "https://investor.fastenal.com/governance/board-of-directors/default.aspx",
+    //     "https://investors.fedex.com/esg/board-of-directors/default.aspx",
+    //     "https://investor.marketaxess.com/governance/executive-management/default.aspx",
+    //     "https://investor.marketaxess.com/governance/board-of-directors/default.aspx",
+    //     "https://www.mastercard.com/news/press/executive-bios/",
+    //     "https://ir.mtch.com/corporate-governance/board-of-directors/default.aspx",
+    //     "https://www.metlife.com/about-us/corporate-governance/board-of-directors/",
+    //     "https://www.monolithicpower.com/en/about-mps/investor-relations/corporate-governance/management.html"
+    // ]
+
+    // "Single Page content popups"
+    const allUrls = [
+        "https://about.netflix.com/en/leadership",
+        "https://about.nike.com/en/company",
+        "https://esg.revvity.com/governance/",
+        "https://investor.phillips66.com/corporate-governance/",
+        "https://mtch.com/leadership",
+        "https://newscorp.com/news-corp-leadership/",
+        "https://nucor.com/leadership",
+        "https://www.ea.com/executives",
+        "https://www.ebayinc.com/company/our-leaders/",
+        "https://investors.ebayinc.com/corporate-governance/board-of-directors/default.aspx",
+        "https://www.eogresources.com/company/board-of-directors/",
+        "https://www.eogresources.com/company/leadership/",
+        "https://ir.edwards.com/governance-sustainability/governance/board-of-directors/default.aspx",
+        "https://www.exeloncorp.com/leadership-and-governance/executive-profiles",
+        "https://www.exeloncorp.com/leadership-and-governance/board-of-directors",
+        "https://www.expediagroup.com/who-we-are/leadership/default.aspx",
+        "https://www.expeditors.com/about-us/leadership",
+        "https://www.marathonpetroleum.com/About/Leadership/",
+        "https://www.marathonpetroleum.com/About/Board-of-Directors/",
+        "https://www.marshmclennan.com/about/leadership.html"
+    ]
+
+    // // "Click Next scenarios"
+    // const allUrls = [
+    //     "https://investors.paycom.com/corporate-governance/management/default.aspx",
+    //     "https://mohawkind.com/about/leadership.php",
+    //     "https://www.discover.com/company/our-company/meet-the-team/board-of-directors/",
+    //     "https://www.marshmclennan.com/about/leadership.html"
+    // ]
+
+    // // "Read more scenarios"
+    // const allUrls = [
+    //     "https://www.pmi.com/our-leadership-team",
+    //     "https://www.dishtv.in/Pages/AboutUs/Top-Management-Profiles.aspx",
+    //     "https://corporate.dollartree.com/about/leadership/executive-leadership",
+    //     "https://corporate.dollartree.com/about/leadership/board-of-directors",
+    //     "https://biz.dominos.com/about-us/leadership/",
+    //     "https://investors.dow.com/en/corporate-governance/board-of-directors/default.aspx",
+    //     "https://www.dupont.com/about/leadership.html",
+    //     "https://dxc.com/us/en/about-us/leadership-and-governance",
+    //     "https://www.eastman.com/en/who-we-are/our-organization/leadership",
+    //     "https://www.ecolab.com/about/leadership",
+    //     "https://www.elcompanies.com/en/investors/corporate-governance/executive-officers",
+    //     "https://www.equifax.com/about-equifax/leadership/",
+    //     "https://investors.evergy.com/about-evergy/leadership-team",
+    //     "https://www.factset.com/our-company/our-leadership",
+    //     "https://investor.factset.com/corporate-governance/board-of-directors",
+    //     "https://www.marathonpetroleum.com/About/Leadership/",
+    //     "https://www.marathonpetroleum.com/About/Board-of-Directors/"
+    // ]
+
+    // // "On hover content"
+    // const allUrls = []
+
+    // // "Pagination"
+    // const allUrls = [
+    //     "https://investors.epam.com/investors/leadership-and-governance"
+    // ]
+
+    // // "Input questionaries"
+    // const allUrls = [
+    //     "https://www.elcompanies.com/en/investors/corporate-governance/board-of-directors",
+    //     "https://www.fedex.com/en-us/about/leadership.html"
+    // ]
+
+    // const allUrls = ["https://www.pixium-vision.com/board-of-directors-2/", "https://humbleandfume.com/", "https://www.brookfieldproperties.com/en/who-we-are/leadership.html", "https://www.i3verticals.com/leadership/", "https://investors.crocs.com/governance/management/default.aspx", "https://www.nexteraenergy.com/company/leadership.html/company.html", "https://www.ttec.com/about-us/executive-team", "https://www.eildoncapital.com/people/", "https://bluglass.com/our-people/", "https://traton.com/en/company/executive-board.html", "https://amagroupltd.com/our-business/ama-group-board/", "https://www.adorebeautygroup.com.au/investor-centre/?page=board-of-directors", "https://www.pixium-vision.com/2019/09/lloyd-diamond/", "https://ir.gatx.com/governance/management/default.aspx", "https://ir.essentgroup.com/governance/management/default.aspx", "https://investors.esabcorporation.com/governance/executive-management/default.aspx", "https://www.automationnth.com/about-us/#team", "https://www.advatix.com/team", "https://jrvrgroup.com/james-river-insurance/our-company/leadership", "https://newsroom.fiserv.com/corporate-information/executive-leadership", "https://www.idacorpinc.com/about-us/our-leadership/default.aspx", "https://www.iaai.com/marketing/ritchiebros-investor-relations", "https://catalystcr.com/our-people/", "https://ir.applied.com/governance/corporate-management/default.aspx", "https://datalix.eu/", "https://bonobos.com/", "https://lakebrains.com/", "https://www.tcs.com/", "https://www.infosys.com/", "https://www.hcltech.com/", "https://www.tata.com/", "https://www.larsentoubro.com/", "https://www.pwc.com/", "https://www.mphasis.com/home.html"]
     // const allUrls = ["https://www.brookfieldproperties.com/en/who-we-are/leadership.html"]
 
     for (let i = 0; i < allUrls.length; i++) {
@@ -279,7 +378,10 @@ async function run() {
             const url = allUrls[i];
             const URL = url;
             console.log("URL =>", URL);
-            const fileName = URL.split("/")[2]
+            var fileName = URL.split("/")
+            fileName = fileName.splice(2, fileName.length)
+            fileName = fileName.join("_")
+            console.log("fileName =>", fileName);
             let page = await browser.newPage();
             await page.setDefaultTimeout(0)
             await page.setDefaultNavigationTimeout(0)
