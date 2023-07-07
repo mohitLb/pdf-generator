@@ -1,258 +1,12 @@
-// // 22-06-2023 Internal, External & Inline css change *************************************************************************************************************** */
-
-// const puppeteer = require('puppeteer');
-
-// async function run() {
-
-//     const customArgs = [
-//         "--start-maximized",
-//         "--load-extension=C:/Users/Abdeali/AppData/Local/Google/Chrome/User Data/Profile 10/Extensions/edibdbjcniadpccecjdfdjjppcpchdlm/1.1.1_0",
-//     ];
-
-//     let browser = await puppeteer.launch({
-//         headless: false,
-//         defaultViewport: null,
-//         executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
-//         ignoreDefaultArgs: ["--disable-extensions", "--enable-automation"],
-//         args: customArgs,
-//     });
-
-
-//     // const allUrls = ["https://humbleandfume.com/", "https://www.brookfieldproperties.com/en/who-we-are/leadership.html", "https://www.i3verticals.com/leadership/", "https://investors.crocs.com/governance/management/default.aspx", "https://www.nexteraenergy.com/company/leadership.html/company.html", "https://www.ttec.com/about-us/executive-team", "https://www.eildoncapital.com/people/", "https://bluglass.com/our-people/", "https://traton.com/en/company/executive-board.html", "https://amagroupltd.com/our-business/ama-group-board/", "https://www.adorebeautygroup.com.au/investor-centre/?page=board-of-directors", "https://www.pixium-vision.com/2019/09/lloyd-diamond/", "https://ir.gatx.com/governance/management/default.aspx", "https://ir.essentgroup.com/governance/management/default.aspx", "https://investors.esabcorporation.com/governance/executive-management/default.aspx", "https://www.automationnth.com/about-us/#team", "https://www.advatix.com/team", "https://jrvrgroup.com/james-river-insurance/our-company/leadership", "https://newsroom.fiserv.com/corporate-information/executive-leadership", "https://www.idacorpinc.com/about-us/our-leadership/default.aspx", "https://www.iaai.com/marketing/ritchiebros-investor-relations", "https://catalystcr.com/our-people/", "https://ir.applied.com/governance/corporate-management/default.aspx", "https://datalix.eu/", "https://bonobos.com/", "https://lakebrains.com/", "https://www.tcs.com/", "https://www.infosys.com/", "https://www.hcltech.com/", "https://www.tata.com/", "https://www.larsentoubro.com/", "https://www.pwc.com/", "https://www.mphasis.com/home.html"]
-//     const allUrls = ["https://humbleandfume.com/"]
-
-//     for (let i = 0; i < allUrls.length; i++) {
-//         try {
-//             const url = allUrls[i];
-//             const URL = url;
-//             const fileName = URL.split("/")[2]
-//             let page = await browser.newPage();
-
-//             await page.goto(URL, { waitUntil: "networkidle0" });
-
-//             // await page.waitForTimeout(30000)
-
-
-//             async function test_cssPage(link) {
-//                 let pageInternal = await browser.newPage();
-
-//                 await pageInternal.goto(link, { timeout: 0 });
-//                 console.log("Getting in");
-
-//                 await pageInternal.waitForTimeout(2000)
-
-//                 const offsetHeight = await pageInternal.evaluate(() => {
-//                     const body = document.querySelector("pre");
-//                     console.log("body =>", body);
-//                     return body.innerText;
-//                 });
-
-
-//                 await pageInternal.close();
-
-//                 return offsetHeight;
-//             }
-
-//             await page.exposeFunction("test_cssPage", test_cssPage);
-
-
-//             await page.evaluate(async () => {
-
-//                 let styles = document.querySelectorAll('style')
-
-//                 for (let i = 0; i < styles.length; i++) {
-//                     const el = styles[i];
-//                     styles[i].remove()
-//                     document.head.appendChild(el)
-//                 }
-
-//                 let links = document.querySelectorAll("link")
-
-//                 var flag = 1
-
-//                 for (let i = 0; i < links.length; i++) {
-//                     if (links[i].rel === "stylesheet") {
-//                         var body = await test_cssPage(links[i].getAttribute("href"))
-//                         const styleElement = document.createElement('style');
-//                         styleElement.innerHTML = `${body}`;
-//                         document.head.appendChild(styleElement);
-//                         console.log("body =>", styleElement);
-//                         // setTimeout(() => {
-//                         links[i].remove()
-//                         flag = flag + 1
-//                         // }, 2000);
-//                     } else {
-//                         links[i].remove()
-//                     }
-//                 }
-//             })
-
-
-//             await page.waitForTimeout(10000)
-
-
-//             await page.evaluate(() => {
-//                 let allels = document.querySelectorAll("*[style]");
-//                 // let links = document.querySelectorAll("link")
-//                 let scripts = document.querySelectorAll('script')
-
-
-//                 for (let i = 0; i < scripts.length; i++) {
-//                     const link = scripts[i];
-//                     link.remove()
-//                 }
-
-//                 for (let i = 0; i < allels.length; i++) {
-//                     const el = allels[i];
-//                     // console.log(el)
-//                     for (let r = 0; r < el.style.length; r++) {
-//                         const element = el.style[r];
-//                         // console.log("el.style.display =>", el.style.display);
-//                         if (
-//                             element !== "flex-display" &&
-//                             element !== "flex-direction" &&
-//                             element !== "flex-wrap" &&
-//                             element !== "flex-flow" &&
-//                             element !== "justify-content" &&
-//                             element !== "align-items" &&
-//                             element !== "gap" &&
-//                             element !== "row-gap" &&
-//                             element !== "column-gap" &&
-//                             !element.includes("margin") &&
-//                             !element.includes("padding")
-//                         ) {
-//                             // console.log("margin" ,element.includes("margin"));
-//                             // console.log("element =>", element, el.style[`${element}`])
-//                             el.style[`${element}`] = ""
-//                         } else if (
-//                             el.style.display !== "grid" &&
-//                             el.style.display !== "flex" &&
-//                             el.style.display !== "inline" &&
-//                             el.style.display !== "inline-block"
-//                         ) {
-//                             // console.log("element =>", element, el.style[`${element}`])
-//                             el.style[`${element}`] = ""
-//                         }
-//                     }
-//                 }
-
-//                 var allClasses = [];
-
-//                 var allElements = document.querySelectorAll('*');
-
-//                 const allowedProperties = [
-//                     'flex-direction',
-//                     'flex-wrap',
-//                     'flex-flow',
-//                     'justify-content',
-//                     'align-items',
-//                     'gap',
-//                     'row-gap',
-//                     'column-gap',
-
-//                     'margin',
-//                     'margin-top',
-//                     'margin-bottom',
-//                     'margin-right',
-//                     'margin-left',
-
-//                     'padding',
-//                     'padding-top',
-//                     'padding-bottom',
-//                     'padding-right',
-//                     'padding-left',
-//                     'display'
-//                 ];
-
-//                 const allowedDisplayValues = [
-//                     'flex',
-//                     'grid',
-//                     'inline',
-//                     'inline-block'
-//                 ];
-
-
-//                 const styleSheetList = document.styleSheets;
-
-//                 const newStyleElement = document.createElement('style');
-
-//                 console.log("styleSheetList.length =>", styleSheetList.length);
-
-//                 for (let i = 0; i < styleSheetList.length; i++) {
-//                     const styleSheet = styleSheetList[i];
-
-//                     const rules = styleSheet.cssRules || styleSheet.rules; // Handle different browser compatibility
-
-//                     for (let j = 0; j < rules.length; j++) {
-//                         const rule = rules[j];
-
-//                         // Check if the rule is a CSSStyleRule and not a CSSImportRule or other type of rule
-//                         if (rule instanceof CSSStyleRule) {
-//                             const { style } = rule;
-
-//                             // Remove properties that are not in the allowed list
-//                             for (let k = style.length - 1; k >= 0; k--) {
-//                                 const property = style[k];
-
-//                                 if (!allowedProperties.includes(property)) {
-//                                     style.removeProperty(property);
-//                                 }
-//                             }
-
-//                             // Check display property and remove if not in allowed display values
-//                             const display = style.getPropertyValue('display');
-//                             if (!allowedDisplayValues.includes(display)) {
-//                                 style.removeProperty('display');
-//                             }
-
-//                             // Append the modified rule to the new style element
-//                             newStyleElement.appendChild(
-//                                 document.createTextNode(`${rule.selectorText} { ${style.cssText} }`)
-//                             );
-//                         }
-//                     }
-//                 }
-//                 document.head.appendChild(newStyleElement);
-
-//                 setTimeout(() => {
-//                     let styles = document.querySelectorAll('style')
-
-//                     for (let i = 0; i < styles.length - 1; i++) {
-//                         const el = styles[i];
-//                         el.remove()
-//                     }
-//                 }, 1000);
-//             })
-//             await page.waitForTimeout(30000)
-//             await page.emulateMediaType("print");
-//             // const pdf = await page.pdf({
-//             //     path: `pdfs/${fileName}.pdf`,
-//             //     margin: { top: "20px", right: "20px", bottom: "20px", left: "20px" },
-//             //     printBackground: true,
-//             //     displayHeaderFooter: true,
-//             //     format: "A4",
-//             //     scale: 0.5
-//             // });
-
-//             await page.waitForTimeout(2000)
-//             // await page.close();
-//             console.log("Done");
-
-//         } catch (error) {
-//             console.log(error);
-//         }
-//     }
-
-//     // await browser.close();
-// }
-
-// run();
-// //*************************************************************************************************************** */
-
-
 // 03-07-2023 old code with styles merge *************************************************************************************************************** */
 const puppeteer = require('puppeteer');
 const fs = require('fs');
+const path = require('path');
+
+// Specify the path and name of the parent folder
+const parentFolderPath = './pdfs';
+const parentFolderPath2 = './pdfs_test';
+
 
 async function run() {
 
@@ -303,29 +57,29 @@ async function run() {
     //     "https://www.monolithicpower.com/en/about-mps/investor-relations/corporate-governance/management.html"
     // ]
 
-    // "Single Page content popups"
-    const allUrls = [
-        "https://about.netflix.com/en/leadership",
-        "https://about.nike.com/en/company",
-        "https://esg.revvity.com/governance/",
-        "https://investor.phillips66.com/corporate-governance/",
-        "https://mtch.com/leadership",
-        "https://newscorp.com/news-corp-leadership/",
-        "https://nucor.com/leadership",
-        "https://www.ea.com/executives",
-        "https://www.ebayinc.com/company/our-leaders/",
-        "https://investors.ebayinc.com/corporate-governance/board-of-directors/default.aspx",
-        "https://www.eogresources.com/company/board-of-directors/",
-        "https://www.eogresources.com/company/leadership/",
-        "https://ir.edwards.com/governance-sustainability/governance/board-of-directors/default.aspx",
-        "https://www.exeloncorp.com/leadership-and-governance/executive-profiles",
-        "https://www.exeloncorp.com/leadership-and-governance/board-of-directors",
-        "https://www.expediagroup.com/who-we-are/leadership/default.aspx",
-        "https://www.expeditors.com/about-us/leadership",
-        "https://www.marathonpetroleum.com/About/Leadership/",
-        "https://www.marathonpetroleum.com/About/Board-of-Directors/",
-        "https://www.marshmclennan.com/about/leadership.html"
-    ]
+    // // "Single Page content popups"
+    // const allUrls = [
+    //     "https://about.netflix.com/en/leadership",
+    //     "https://about.nike.com/en/company",
+    //     "https://esg.revvity.com/governance/",
+    //     "https://investor.phillips66.com/corporate-governance/",
+    //     "https://mtch.com/leadership",
+    //     "https://newscorp.com/news-corp-leadership/",
+    //     "https://nucor.com/leadership",
+    //     "https://www.ea.com/executives",
+    //     "https://www.ebayinc.com/company/our-leaders/",
+    //     "https://investors.ebayinc.com/corporate-governance/board-of-directors/default.aspx",
+    //     "https://www.eogresources.com/company/board-of-directors/",
+    //     "https://www.eogresources.com/company/leadership/",
+    //     "https://ir.edwards.com/governance-sustainability/governance/board-of-directors/default.aspx",
+    //     "https://www.exeloncorp.com/leadership-and-governance/executive-profiles",
+    //     "https://www.exeloncorp.com/leadership-and-governance/board-of-directors",
+    //     "https://www.expediagroup.com/who-we-are/leadership/default.aspx",
+    //     "https://www.expeditors.com/about-us/leadership",
+    //     "https://www.marathonpetroleum.com/About/Leadership/",
+    //     "https://www.marathonpetroleum.com/About/Board-of-Directors/",
+    //     "https://www.marshmclennan.com/about/leadership.html"
+    // ]
 
     // // "Click Next scenarios"
     // const allUrls = [
@@ -371,7 +125,7 @@ async function run() {
     // ]
 
     // const allUrls = ["https://www.pixium-vision.com/board-of-directors-2/", "https://humbleandfume.com/", "https://www.brookfieldproperties.com/en/who-we-are/leadership.html", "https://www.i3verticals.com/leadership/", "https://investors.crocs.com/governance/management/default.aspx", "https://www.nexteraenergy.com/company/leadership.html/company.html", "https://www.ttec.com/about-us/executive-team", "https://www.eildoncapital.com/people/", "https://bluglass.com/our-people/", "https://traton.com/en/company/executive-board.html", "https://amagroupltd.com/our-business/ama-group-board/", "https://www.adorebeautygroup.com.au/investor-centre/?page=board-of-directors", "https://www.pixium-vision.com/2019/09/lloyd-diamond/", "https://ir.gatx.com/governance/management/default.aspx", "https://ir.essentgroup.com/governance/management/default.aspx", "https://investors.esabcorporation.com/governance/executive-management/default.aspx", "https://www.automationnth.com/about-us/#team", "https://www.advatix.com/team", "https://jrvrgroup.com/james-river-insurance/our-company/leadership", "https://newsroom.fiserv.com/corporate-information/executive-leadership", "https://www.idacorpinc.com/about-us/our-leadership/default.aspx", "https://www.iaai.com/marketing/ritchiebros-investor-relations", "https://catalystcr.com/our-people/", "https://ir.applied.com/governance/corporate-management/default.aspx", "https://datalix.eu/", "https://bonobos.com/", "https://lakebrains.com/", "https://www.tcs.com/", "https://www.infosys.com/", "https://www.hcltech.com/", "https://www.tata.com/", "https://www.larsentoubro.com/", "https://www.pwc.com/", "https://www.mphasis.com/home.html"]
-    // const allUrls = ["https://www.brookfieldproperties.com/en/who-we-are/leadership.html"]
+    const allUrls = ["https://lakebrains.com/"]
 
     for (let i = 0; i < allUrls.length; i++) {
         try {
@@ -382,6 +136,31 @@ async function run() {
             fileName = fileName.splice(2, fileName.length)
             fileName = fileName.join("_")
             console.log("fileName =>", fileName);
+
+            // Specify the name of the new folder
+            const newFolderName = fileName;
+
+            // Create the new folder within the parent folder
+            const newFolderPath = path.join(parentFolderPath, newFolderName);
+            const newFolderPath2 = path.join(parentFolderPath2, newFolderName);
+
+            fs.mkdir(newFolderPath, { recursive: true }, (err) => {
+                if (err) {
+                    console.error('Error creating folder:', err);
+                } else {
+                    console.log('Folder created successfully!');
+                }
+            });
+
+            fs.mkdir(newFolderPath2, { recursive: true }, (err) => {
+                if (err) {
+                    console.error('Error creating folder:', err);
+                } else {
+                    console.log('Folder created successfully!');
+                }
+            });
+
+
             let page = await browser.newPage();
             await page.setDefaultTimeout(0)
             await page.setDefaultNavigationTimeout(0)
@@ -391,6 +170,101 @@ async function run() {
             await checkVideo(page)
 
             await page.waitForTimeout(5000)
+
+            var pageNumber = 1
+
+            // async function test_pdfPage() {
+            //     await page.emulateMediaType("screen");
+            //     await page.pdf({
+            //         path: `pdfs/${fileName}/${fileName}${pageNumber}.pdf`,
+            //         printBackground: true,
+            //         format: "A4",
+            //         scale: 0.3
+            //     });
+            //     pageNumber = pageNumber + 1
+
+            //     await page.evaluate(async () => {
+            //         // Get elements with attribute names or class names containing "close"
+            //         const elementsWithCloseAttributes = Array.from(document.querySelectorAll('*')).filter(element => {
+            //             const attributes = Array.from(element.attributes);
+            //             const classNames = Array.from(element.classList);
+            //             return (
+            //                 attributes.some(attribute => attribute.name.toLowerCase().includes('close')) ||
+            //                 classNames.some(className => className.toLowerCase().includes('close'))
+            //             );
+            //         });
+
+            //         console.log("elementsWithCloseAttributes =>", elementsWithCloseAttributes);
+
+            //         // Click on each element
+            //         elementsWithCloseAttributes.forEach(closeElement => {
+            //             const event = new MouseEvent('click', {
+            //                 bubbles: true,
+            //                 cancelable: true,
+            //                 view: window
+            //             });
+            //             closeElement.dispatchEvent(event);
+            //         });
+            //     });
+            // }
+
+            // await page.exposeFunction("test_pdfPage", test_pdfPage);
+
+            // await page.evaluate(async () => {
+            //     return new Promise(async (resolve) => {
+            //         // Helper function to check if an element or its ancestors have an href attribute
+            //         function hasHrefAncestor(element) {
+            //             let currentElement = element;
+            //             while (currentElement) {
+            //                 if (currentElement.hasAttribute("href")) {
+            //                     return true;
+            //                 }
+            //                 currentElement = currentElement.parentElement;
+            //             }
+            //             return false;
+            //         }
+            //         // Get all div or button elements with cursor: pointer and without href attribute in self or ancestors
+            //         const pointerElementsWithoutHrefAncestors = Array.from(document.querySelectorAll("div, button, h2, h3")).filter(element => {
+            //             const styles = window.getComputedStyle(element);
+            //             return styles.getPropertyValue("cursor") === "pointer" && !hasHrefAncestor(element);
+            //         }).filter(element => {
+            //             const attributes = Array.from(element.attributes).map(attr => attr.name);
+            //             const classNames = element.className.split(" ");
+            //             return !attributes.some(attr => attr.toLowerCase().includes("nav") || attr.toLowerCase().includes("menu") || attr.toLowerCase().includes("dropdown")) &&
+            //                 !classNames.some(className => className.toLowerCase().includes("nav") || className.toLowerCase().includes("menu") || className.toLowerCase().includes("dropdown")) &&
+            //                 !attributes.some(attr => attr !== "href" && element.getAttribute(attr).toLowerCase().includes("search")) &&
+            //                 !attributes.some(attr => attr !== "href" && element.getAttribute(attr).toLowerCase().includes("subscribe")) &&
+            //                 !attributes.some(attr => attr !== "href" && element.getAttribute(attr).toLowerCase().includes("submit")) &&
+            //                 !attributes.some(attr => attr !== "href" && element.getAttribute(attr).toLowerCase().includes("next")) &&
+            //                 !attributes.some(attr => attr !== "href" && element.getAttribute(attr).toLowerCase().includes("previous")) &&
+            //                 !attributes.some(attr => attr !== "href" && element.getAttribute(attr).toLowerCase().includes("nav"));
+            //         });
+
+            //         if (pointerElementsWithoutHrefAncestors.length) {
+            //             for (let i = 0; i < pointerElementsWithoutHrefAncestors.length; i++) {
+            //                 setTimeout(async () => {
+            //                     try {
+            //                         console.log("i =>", i + 1, pointerElementsWithoutHrefAncestors.length);
+            //                         console.log(pointerElementsWithoutHrefAncestors[i]);
+            //                         pointerElementsWithoutHrefAncestors[i].click();
+            //                         await test_pdfPage();
+            //                         if ((i + 1) === pointerElementsWithoutHrefAncestors.length) {
+            //                             setTimeout(() => {
+            //                                 console.log("Resolved");
+            //                                 resolve();
+            //                             }, 5000);
+            //                         }
+            //                     } catch (error) {
+            //                         console.log("Error =>", error);
+            //                     }
+            //                 }, i * 5000); // 10 seconds delay between clicks
+            //             }
+            //         } else {
+            //             resolve();
+            //         }
+            //     })
+            // })
+
 
             async function test_cssPage(link) {
                 let pageInternal = await browser.newPage();
@@ -403,7 +277,7 @@ async function run() {
                     const offsetHeight = await pageInternal.evaluate(() => {
                         const body = document.querySelector("pre");
                         console.log("body =>", body);
-                        return body.innerText;
+                        return body ? body.innerText : ""
                     });
 
                     await pageInternal.close();
@@ -532,36 +406,38 @@ async function run() {
 
                 let allels = document.querySelectorAll("*[style]");
 
-                for (let i = 0; i < allels.length; i++) {
-                    const el = allels[i];
-                    // console.log(el)
-                    for (let r = 0; r < el.style.length; r++) {
-                        const element = el.style[r];
-                        // console.log("el.style.display =>", el.style.display);
-                        if (
-                            element !== "flex-display" &&
-                            element !== "flex-direction" &&
-                            element !== "flex-wrap" &&
-                            element !== "flex-flow" &&
-                            element !== "justify-content" &&
-                            element !== "align-items" &&
-                            element !== "gap" &&
-                            element !== "row-gap" &&
-                            element !== "column-gap" &&
-                            !element.includes("margin") &&
-                            !element.includes("padding")
-                        ) {
-                            el.style[`${element}`] = ""
-                        } else if (
-                            el.style.display !== "grid" &&
-                            el.style.display !== "flex" &&
-                            el.style.display !== "inline" &&
-                            el.style.display !== "inline-block"
-                        ) {
-                            el.style[`${element}`] = ""
+                setInterval(() => {
+                    for (let i = 0; i < allels.length; i++) {
+                        const el = allels[i];
+                        // console.log(el)
+                        for (let r = 0; r < el.style.length; r++) {
+                            const element = el.style[r];
+                            // console.log("el.style.display =>", el.style.display);
+                            if (
+                                element !== "flex-display" &&
+                                element !== "flex-direction" &&
+                                element !== "flex-wrap" &&
+                                element !== "flex-flow" &&
+                                element !== "justify-content" &&
+                                element !== "align-items" &&
+                                element !== "gap" &&
+                                element !== "row-gap" &&
+                                element !== "column-gap" &&
+                                !element.includes("margin") &&
+                                !element.includes("padding")
+                            ) {
+                                el.style[`${element}`] = ""
+                            } else if (
+                                el.style.display !== "grid" &&
+                                el.style.display !== "flex" &&
+                                el.style.display !== "inline" &&
+                                el.style.display !== "inline-block"
+                            ) {
+                                el.style[`${element}`] = ""
+                            }
                         }
                     }
-                }
+                }, 500);
 
 
                 const allowedProperties = [
@@ -920,9 +796,9 @@ async function run() {
             }
             await checkImage(page)
             await page.waitForTimeout(5000)
-            await page.emulateMediaType("print");
+            await page.emulateMediaType("screen");
             await page.pdf({
-                path: `pdfs/${fileName}.pdf`,
+                path: `pdfs/${fileName}/${fileName}.pdf`,
                 margin: { top: "20px", right: "20px", bottom: "20px", left: "20px" },
                 printBackground: true,
                 displayHeaderFooter: false,
@@ -933,7 +809,7 @@ async function run() {
             await page.waitForTimeout(2000)
             await removePage(fileName).catch((err) => console.log(err));
             await page.waitForTimeout(2000)
-            await page.close();
+            // await page.close();
             console.log("Done");
 
         } catch (error) {
@@ -941,7 +817,7 @@ async function run() {
         }
     }
 
-    await browser.close();
+    // await browser.close();
 }
 
 run();
@@ -1021,35 +897,6 @@ const findSectionDivs = async (page, el, index, flag) => {
     let classWithFlag = `mohitTestPDF_${flag}`
     if (index < 6) {
         let divtags = await page.$$(`${el} > div`)
-        // , (els) => {
-        //     let data = []
-        //     for (let i = 0; i < els.length; i++) {
-        //         const el = els[i];
-        //         console.log(el);
-        //         let cls = el.getAttribute("class")?.trim()
-        //         if (cls && cls.length) {
-        //             cls = cls.split(" ");
-        //             let parent = "";
-        //             for (let j = 0; j < cls.length; j++) {
-        //                 const el = cls[j];
-        //                 parent = parent + "." + el;
-        //             }
-        //             data.push(parent)
-        //         }
-        //         else {
-        //             let id = el.getAttribute('id')?.trim()
-        //             if (id) {
-        //                 data.push("#" + id)
-        //             }
-        //             else {
-        //                 data.push(null)
-        //             }
-        //         }
-        //     }
-        //     return data
-        // }
-
-        // );
 
         if (divtags.length && divtags.length < 2) {
             let previous = ""
@@ -1063,7 +910,9 @@ const findSectionDivs = async (page, el, index, flag) => {
                     let parent = "";
                     for (let j = 0; j < cls.length; j++) {
                         const el = cls[j];
-                        parent = parent + "." + el;
+                        if (!el == " ") {
+                            parent = parent + "." + el;
+                        }
                     }
                     classNameNew = parent
                 }
@@ -1128,21 +977,7 @@ const findSectionDivs = async (page, el, index, flag) => {
                             classNameNew = "." + cllass
                         }
                     }
-                    // console.log("test log =>");
-                    // secondLevelFindSections(page, classNameNew, 1, "justForTest", pagesRequired)
-                    // let breakIndex = await page.evaluate((el, pagesRequired) => {
-                    //     let children = el.childNodes
-                    //     let breakIndex = Math.ceil(children.length / pagesRequired)
-                    //     for (let i = breakIndex; i < children.length; i = i + breakIndex) {
-                    //         const element = children[i];
-                    //         element.style.pageBreakAfter = "always"
-                    //         element.style.marginTop = "50px"
-                    //     }
-                    //     return breakIndex
-                    // }, el, pagesRequired)
-                    // console.log("breakIndex => ", breakIndex);
                 }
-
             }
             return await page.addStyleTag({
                 content: `
@@ -1210,20 +1045,7 @@ const secondLevelFindSections = async (page, el, index, flag, pagesRequired) => 
         } else if (divtags.length && divtags.length > 2) {
             console.log("senasio => 1.2");
             let el = divtags[0]
-            // for (let k = 0; k < divtags.length; k++) {
-            //     const el = divtags[k];
-            // let cllass = `${classWithFlag}_${k}`
-            // let x = el
-            // await page.evaluate((x, cllass) => x.classList.add(cllass), x, cllass)
-            // // el.classList.add(`${classWithFlag}_${k}`)
-            // style =
-            //     style +
-            //     `
-            // .${classWithFlag}_${k} {
-            //     page-break-after: always; 
-            //     margin-top: 50px; 
-            // }
-            // `;
+
             let breakIndex = await page.evaluate((el, pagesRequired) => {
                 console.log("parent =>", pagesRequired, el);
                 let parent = el.parentElement
@@ -1237,16 +1059,6 @@ const secondLevelFindSections = async (page, el, index, flag, pagesRequired) => 
                 return breakIndex
             }, el, pagesRequired)
             console.log("breakIndex => ", breakIndex);
-
-            // }
-            //         return await page.addStyleTag({
-            //             content: `
-            //   @page {
-            //     size: A4;
-            //   }
-            //   ${style}
-            //   `,
-            //         });
         }
     }
     else {
@@ -1388,37 +1200,89 @@ async function checkRemovePopups(page) {
     })
 }
 
-async function removePage(filePath) {
-    const { writeFileSync, readFileSync } = require("fs");
+async function removePage(filePathOld, pageNumber) {
+    // const { writeFileSync, readFileSync } = require("fs");
+    // const { PDFDocument } = require("pdf-lib");
+    // const pdf = require('pdf-parse');
+
+    // const dataBuffer = await readFileSync(`pdfs/${filePath}/${filePath}${pageNumber ? pageNumber : ""}.pdf`);
+    // const letters = await PDFDocument.load(readFileSync(`pdfs/${filePath}/${filePath}${pageNumber ? pageNumber : ""}.pdf`));
+
+    // await pdf(dataBuffer).then(async function (data) {
+    //     const pages = data.text.split('\n\n'); // Split the text by page
+
+    //     var num = 1
+    //     for (let i = 0; i < pages.length; i++) {
+    //         // Get the text of the desired page
+    //         const desiredPageText = pages[i];
+
+    //         // console.log("desiredPageText =>", desiredPageText);
+
+
+    //         if (!desiredPageText && i !== 0) {
+    //             console.log(` `);
+    //             console.log(`Text of page ${num}:`);
+    //             console.log(desiredPageText);
+    //             await letters.removePage(i - num);
+    //             num = num + 1
+    //         }
+    //     }
+    //     await writeFileSync(`pdfs_test/${filePath}/${filePath}${pageNumber ? pageNumber : ""}.pdf`, await letters.save());
+    // }).catch(function (error) {
+    //     console.log('An error occurred:', error);
+    // });
+
+
+    const { writeFileSync, readFileSync, readdirSync } = require("fs");
     const { PDFDocument } = require("pdf-lib");
-    const pdf = require('pdf-parse');
+    const pdf = require("pdf-parse");
 
-    const dataBuffer = readFileSync(`pdfs/${filePath}.pdf`);
-    const letters = await PDFDocument.load(readFileSync(`pdfs/${filePath}.pdf`));
+    // Directory path containing the PDF files
+    const directoryPath = `pdfs/${filePathOld}`;
 
-    await pdf(dataBuffer).then(async function (data) {
-        const pages = data.text.split('\n\n'); // Split the text by page
+    // Read the list of files in the directory
+    const files = await readdirSync(directoryPath);
+    console.log(files);
 
-        var num = 1
-        for (let i = 0; i < pages.length; i++) {
-            // Get the text of the desired page
-            const desiredPageText = pages[i];
+    // Loop through each PDF file
+    for (const file of files) {
+        if (file.endsWith(".pdf")) {
+            // Construct the file path
+            const filePath = `${directoryPath}/${file}`;
 
-            // console.log("desiredPageText =>", desiredPageText);
+            // Read the file buffer
+            const dataBuffer = readFileSync(filePath);
 
+            // Load the PDF document
+            const letters = await PDFDocument.load(dataBuffer);
 
-            if (!desiredPageText && i !== 0) {
-                console.log(` `);
-                console.log(`Text of page ${num}:`);
-                console.log(desiredPageText);
-                await letters.removePage(i - num);
-                num = num + 1
-            }
+            await pdf(dataBuffer)
+                .then(async function (data) {
+                    const pages = data.text.split("\n\n"); // Split the text by page
+
+                    let num = 1;
+                    for (let i = 0; i < pages.length; i++) {
+                        // Get the text of the desired page
+                        const desiredPageText = pages[i];
+
+                        if (!desiredPageText && i !== 0) {
+                            console.log(`Text of page ${num}:`);
+                            console.log(desiredPageText);
+                            await letters.removePage(i - num);
+                            num++;
+                        }
+                    }
+
+                    // Save the modified PDF
+                    const outputFilePath = `pdfs_test/${filePathOld}/${file}`;
+                    await writeFileSync(outputFilePath, await letters.save());
+                    // console.log(`Processed PDF: ${file}. Saved as: ${outputFilePath}`);
+                })
+                .catch(function (error) {
+                    console.log(`An error occurred while processing PDF: ${file}`);
+                    console.log("Error:", error);
+                });
         }
-        writeFileSync(`pdfs_test/${filePath}_test.pdf`, await letters.save());
-    }).catch(function (error) {
-        console.log('An error occurred:', error);
-    });
-
+    }
 }
 // *************************************************************************************************************** */

@@ -1,0 +1,18 @@
+2. "Single Page content popups"
+	Working => "https://about.netflix.com/en/leadership","https://about.nike.com/en/company","https://esg.revvity.com/governance/","https://investor.phillips66.com/corporate-governance/","https://mtch.com/leadership","https://nucor.com/leadership","https://investors.ebayinc.com/corporate-governance/board-of-directors/default.aspx","https://www.exeloncorp.com/leadership-and-governance/executive-profiles","https://www.exeloncorp.com/leadership-and-governance/executive-profiles","https://www.exeloncorp.com/leadership-and-governance/board-of-directors","https://www.expediagroup.com/who-we-are/leadership/default.aspx","https://www.expeditors.com/about-us/leadership","https://www.marshmclennan.com/about/leadership.html"
+
+
+
+	Not Working => 	1. "https://www.ea.com/executives" -> working in nested #shadow root & working in nested custome html tags like <ea-section-column>, <ea-grid>, <ea-container>
+			2. "https://www.ebayinc.com/company/our-leaders/jamie-iannone/#jamie-iannone" -> a tag element with href attribute
+			3. "https://www.eogresources.com/company/board-of-directors/" -> svg icons "i"
+			4. "https://www.eogresources.com/company/leadership/" -> svg icons "i"
+			5. "https://www.marathonpetroleum.com/About/Leadership" -> a tag element with href attribute
+			6. "https://www.marathonpetroleum.com/About/Board-of-Directors/" -> a tag element with href attribute
+
+
+3. "Click Next scenarios"
+	Working => "https://investors.paycom.com/corporate-governance/management/default.aspx","https://mohawkind.com/about/leadership.php","https://www.discover.com/company/our-company/meet-the-team/board-of-directors/","https://www.marshmclennan.com/about/leadership.html"
+
+
+	Not Working => 	none
