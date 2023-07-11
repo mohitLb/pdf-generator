@@ -173,97 +173,146 @@ async function run() {
 
             var pageNumber = 1
 
-            // async function test_pdfPage() {
-            //     await page.emulateMediaType("screen");
-            //     await page.pdf({
-            //         path: `pdfs/${fileName}/${fileName}${pageNumber}.pdf`,
-            //         printBackground: true,
-            //         format: "A4",
-            //         scale: 0.3
-            //     });
-            //     pageNumber = pageNumber + 1
+            async function test_pdfPage(profileName1, pageTitle) {
+                await page.emulateMediaType("screen");
+                await page.pdf({
+                    path: `pdfs/${fileName}/${fileName}${pageNumber}.pdf`,
+                    margin: { top: "20px", right: "20px", bottom: "20px", left: "20px" },
+                    printBackground: true,
+                    format: "A4",
+                    scale: 0.5
+                });
 
-            //     await page.evaluate(async () => {
-            //         // Get elements with attribute names or class names containing "close"
-            //         const elementsWithCloseAttributes = Array.from(document.querySelectorAll('*')).filter(element => {
-            //             const attributes = Array.from(element.attributes);
-            //             const classNames = Array.from(element.classList);
-            //             return (
-            //                 attributes.some(attribute => attribute.name.toLowerCase().includes('close')) ||
-            //                 classNames.some(className => className.toLowerCase().includes('close'))
-            //             );
-            //         });
+                var websiteName = URL
 
-            //         console.log("elementsWithCloseAttributes =>", elementsWithCloseAttributes);
 
-            //         // Click on each element
-            //         elementsWithCloseAttributes.forEach(closeElement => {
-            //             const event = new MouseEvent('click', {
-            //                 bubbles: true,
-            //                 cancelable: true,
-            //                 view: window
-            //             });
-            //             closeElement.dispatchEvent(event);
-            //         });
-            //     });
-            // }
+                // Usage example
+                await addPageNumbersToPDF(`pdfs/${fileName}/${fileName}${pageNumber}.pdf`, profileName1, websiteName, pageTitle)
+                    .then(() => {
+                        console.log('Page numbers added successfully!');
+                    })
+                    .catch((error) => {
+                        console.log('Error adding page numbers:', error);
+                    });
 
-            // await page.exposeFunction("test_pdfPage", test_pdfPage);
+                pageNumber = pageNumber + 1
 
-            // await page.evaluate(async () => {
-            //     return new Promise(async (resolve) => {
-            //         // Helper function to check if an element or its ancestors have an href attribute
-            //         function hasHrefAncestor(element) {
-            //             let currentElement = element;
-            //             while (currentElement) {
-            //                 if (currentElement.hasAttribute("href")) {
-            //                     return true;
-            //                 }
-            //                 currentElement = currentElement.parentElement;
-            //             }
-            //             return false;
-            //         }
-            //         // Get all div or button elements with cursor: pointer and without href attribute in self or ancestors
-            //         const pointerElementsWithoutHrefAncestors = Array.from(document.querySelectorAll("div, button, h2, h3")).filter(element => {
-            //             const styles = window.getComputedStyle(element);
-            //             return styles.getPropertyValue("cursor") === "pointer" && !hasHrefAncestor(element);
-            //         }).filter(element => {
-            //             const attributes = Array.from(element.attributes).map(attr => attr.name);
-            //             const classNames = element.className.split(" ");
-            //             return !attributes.some(attr => attr.toLowerCase().includes("nav") || attr.toLowerCase().includes("menu") || attr.toLowerCase().includes("dropdown")) &&
-            //                 !classNames.some(className => className.toLowerCase().includes("nav") || className.toLowerCase().includes("menu") || className.toLowerCase().includes("dropdown")) &&
-            //                 !attributes.some(attr => attr !== "href" && element.getAttribute(attr).toLowerCase().includes("search")) &&
-            //                 !attributes.some(attr => attr !== "href" && element.getAttribute(attr).toLowerCase().includes("subscribe")) &&
-            //                 !attributes.some(attr => attr !== "href" && element.getAttribute(attr).toLowerCase().includes("submit")) &&
-            //                 !attributes.some(attr => attr !== "href" && element.getAttribute(attr).toLowerCase().includes("next")) &&
-            //                 !attributes.some(attr => attr !== "href" && element.getAttribute(attr).toLowerCase().includes("previous")) &&
-            //                 !attributes.some(attr => attr !== "href" && element.getAttribute(attr).toLowerCase().includes("nav"));
-            //         });
+                await page.evaluate(async () => {
+                    // Get elements with attribute names or class names containing "close"
+                    const elementsWithCloseAttributes = Array.from(document.querySelectorAll('*')).filter(element => {
+                        const attributes = Array.from(element.attributes);
+                        const classNames = Array.from(element.classList);
+                        return (
+                            attributes.some(attribute => attribute.name.toLowerCase().includes('close')) ||
+                            classNames.some(className => className.toLowerCase().includes('close'))
+                        );
+                    });
 
-            //         if (pointerElementsWithoutHrefAncestors.length) {
-            //             for (let i = 0; i < pointerElementsWithoutHrefAncestors.length; i++) {
-            //                 setTimeout(async () => {
-            //                     try {
-            //                         console.log("i =>", i + 1, pointerElementsWithoutHrefAncestors.length);
-            //                         console.log(pointerElementsWithoutHrefAncestors[i]);
-            //                         pointerElementsWithoutHrefAncestors[i].click();
-            //                         await test_pdfPage();
-            //                         if ((i + 1) === pointerElementsWithoutHrefAncestors.length) {
-            //                             setTimeout(() => {
-            //                                 console.log("Resolved");
-            //                                 resolve();
-            //                             }, 5000);
-            //                         }
-            //                     } catch (error) {
-            //                         console.log("Error =>", error);
-            //                     }
-            //                 }, i * 5000); // 10 seconds delay between clicks
-            //             }
-            //         } else {
-            //             resolve();
-            //         }
-            //     })
-            // })
+                    console.log("elementsWithCloseAttributes =>", elementsWithCloseAttributes);
+
+                    setTimeout(() => {
+                        // Click on each element
+                        elementsWithCloseAttributes.forEach(closeElement => {
+                            const event = new MouseEvent('click', {
+                                bubbles: true,
+                                cancelable: true,
+                                view: window
+                            });
+                            closeElement.dispatchEvent(event);
+                        });
+                    }, 2000);
+                });
+
+
+
+            }
+
+            await page.exposeFunction("test_pdfPage", test_pdfPage);
+
+            await page.evaluate(async () => {
+                return new Promise(async (resolve) => {
+                    // Helper function to check if an element or its ancestors have an href attribute
+                    function hasHrefAncestor(element) {
+                        let currentElement = element;
+                        while (currentElement) {
+                            if (currentElement.hasAttribute("href")) {
+                                return true;
+                            }
+                            currentElement = currentElement.parentElement;
+                        }
+                        return false;
+                    }
+                    // Get all div or button elements with cursor: pointer and without href attribute in self or ancestors
+                    const pointerElementsWithoutHrefAncestors = Array.from(document.querySelectorAll("div, button")).filter(element => {
+                        const styles = window.getComputedStyle(element);
+                        return styles.getPropertyValue("cursor") === "pointer" && !hasHrefAncestor(element);
+                    }).filter(element => {
+                        const attributes = Array.from(element.attributes).map(attr => attr.name);
+                        const classNames = element.className.split(" ");
+                        return !attributes.some(attr => attr.toLowerCase().includes("nav") || attr.toLowerCase().includes("menu") || attr.toLowerCase().includes("dropdown")) &&
+                            !classNames.some(className => className.toLowerCase().includes("nav") || className.toLowerCase().includes("menu") || className.toLowerCase().includes("dropdown")) &&
+                            !attributes.some(attr => attr !== "href" && element.getAttribute(attr).toLowerCase().includes("search")) &&
+                            !attributes.some(attr => attr !== "href" && element.getAttribute(attr).toLowerCase().includes("subscribe")) &&
+                            !attributes.some(attr => attr !== "href" && element.getAttribute(attr).toLowerCase().includes("submit")) &&
+                            !attributes.some(attr => attr !== "href" && element.getAttribute(attr).toLowerCase().includes("next")) &&
+                            !attributes.some(attr => attr !== "href" && element.getAttribute(attr).toLowerCase().includes("previous")) &&
+                            !attributes.some(attr => attr !== "href" && element.getAttribute(attr).toLowerCase().includes("nav"));
+                    });
+
+                    if (pointerElementsWithoutHrefAncestors.length) {
+                        for (let i = 0; i < pointerElementsWithoutHrefAncestors.length; i++) {
+                            setTimeout(async () => {
+                                try {
+
+                                    var pageTitle = document.title;
+
+                                    console.log("i =>", i + 1, pointerElementsWithoutHrefAncestors.length);
+                                    console.log(pointerElementsWithoutHrefAncestors[i]);
+                                    pointerElementsWithoutHrefAncestors[i].click();
+
+                                    var profileName1 = null;
+
+                                    // Create a new MutationObserver
+                                    const observer = new MutationObserver(mutations => {
+                                        mutations.forEach(mutation => {
+                                            if (mutation.type === 'attributes' && mutation.target.nodeType === Node.ELEMENT_NODE && mutation.target.nodeName !== "BODY") {
+                                                const elements = mutation.target.getElementsByClassName('name'); // Get elements with class 'name'
+
+                                                for (let i = 0; i < elements.length; i++) {
+                                                    // console.log("Mutation target:", [mutation.target]); // Element that has changed
+                                                    console.log("Inner element:", elements[i].innerText); // Inner element with class 'name'
+                                                    profileName1 = elements[i].innerText
+                                                }
+                                            }
+                                        });
+                                    });
+
+                                    // Start observing the document for attribute changes on elements
+                                    await observer.observe(document, { attributes: true, subtree: true });
+
+                                    await test_pdfPage(profileName1, pageTitle);
+
+                                    setTimeout(async () => {
+                                        console.log("profileName1 =>", profileName1);
+                                        observer.disconnect()
+                                    }, 2000);
+
+                                    if ((i + 1) === pointerElementsWithoutHrefAncestors.length) {
+                                        setTimeout(() => {
+                                            console.log("Resolved");
+                                            resolve();
+                                        }, 5000);
+                                    }
+                                } catch (error) {
+                                    console.log("Error =>", error);
+                                }
+                            }, i * 5000); // 10 seconds delay between clicks
+                        }
+                    } else {
+                        resolve();
+                    }
+                })
+            })
 
 
             async function test_cssPage(link) {
@@ -322,7 +371,7 @@ async function run() {
             await page.exposeFunction("test_newPage", test_newPage);
 
             var mainStyles;
-            await fs.readFile('public/main.css', 'utf8', (err, data) => {
+            await fs.readFile('public/puppeteerMain.css', 'utf8', (err, data) => {
                 return new Promise(async (resolve) => {
                     if (err) {
                         console.error(err);
@@ -348,12 +397,11 @@ async function run() {
 
                 let links = document.querySelectorAll("link")
 
-                console.log(links);
+                // console.log(links);
 
                 for (let i = 0; i < links.length; i++) {
-                    if (links[i].rel && links[i].rel === "stylesheet" && links[i].getAttribute("href").includes("https")) {
-
-                        var body = await test_cssPage(links[i].getAttribute("href"))
+                    if (links[i].rel && links[i].rel === "stylesheet" && links[i].href.includes("https")) {
+                        var body = await test_cssPage(links[i].href)
                         const styleElement = document.createElement('style');
                         styleElement.innerHTML = `${body}`;
                         document.head.appendChild(styleElement);
@@ -393,6 +441,7 @@ async function run() {
 
                 for (let i = 0; i < scripts.length; i++) {
                     const link = scripts[i];
+                    console.log("links[i] =>", scripts[i]);
                     link.remove()
                 }
                 for (let i = 0; i < headers.length; i++) {
@@ -439,7 +488,6 @@ async function run() {
                     }
                 }, 500);
 
-
                 const allowedProperties = [
                     'flex-direction',
                     'flex-wrap',
@@ -449,13 +497,11 @@ async function run() {
                     'gap',
                     'row-gap',
                     'column-gap',
-
                     'margin',
                     'margin-top',
                     'margin-bottom',
                     'margin-right',
                     'margin-left',
-
                     'padding',
                     'padding-top',
                     'padding-bottom',
@@ -471,16 +517,12 @@ async function run() {
                     'inline-block'
                 ];
 
-
                 const styleSheetList = document.styleSheets;
-
                 const newStyleElement = document.createElement('style');
-
-                console.log("styleSheetList.length =>", styleSheetList.length);
+                newStyleElement.id = "merged_styles";
 
                 for (let i = 0; i < styleSheetList.length; i++) {
                     const styleSheet = styleSheetList[i];
-
                     const rules = styleSheet.cssRules || styleSheet.rules; // Handle different browser compatibility
 
                     for (let j = 0; j < rules.length; j++) {
@@ -490,10 +532,14 @@ async function run() {
                         if (rule instanceof CSSStyleRule) {
                             const { style } = rule;
 
+                            // Check if display is flex and add flex-wrap: wrap
+                            if (style.display === 'flex') {
+                                style.setProperty('flex-wrap', 'wrap');
+                            }
+
                             // Remove properties that are not in the allowed list
                             for (let k = style.length - 1; k >= 0; k--) {
                                 const property = style[k];
-
                                 if (!allowedProperties.includes(property)) {
                                     style.removeProperty(property);
                                 }
@@ -512,19 +558,26 @@ async function run() {
                         }
                     }
                 }
+
                 document.head.appendChild(newStyleElement);
+
 
                 setTimeout(() => {
                     let styles = document.querySelectorAll('style')
 
-                    for (let i = 0; i < styles.length - 1; i++) {
-                        const el = styles[i];
-                        el.remove()
+                    for (let i = 0; i < styles.length; i++) {
+                        console.log(styles[i]);
+                        if (!styles[i].id && (styles[i].id !== "merged_styles" || styles[i].id !== "puppeteerMain")) {
+                            const el = styles[i];
+                            el.remove()
+                        }
                     }
                 }, 1000);
             })
 
-            await page.addStyleTag({ path: 'public/main.css' })
+            await page.waitForTimeout(5000)
+
+            await page.addStyleTag({ path: 'public/puppeteerMain.css' })
 
             // Add attribute to every element
             await page.evaluate(async (mainStyles) => {
@@ -796,7 +849,7 @@ async function run() {
             }
             await checkImage(page)
             await page.waitForTimeout(5000)
-            await page.emulateMediaType("screen");
+            await page.emulateMediaType("print");
             await page.pdf({
                 path: `pdfs/${fileName}/${fileName}.pdf`,
                 margin: { top: "20px", right: "20px", bottom: "20px", left: "20px" },
@@ -807,6 +860,14 @@ async function run() {
             });
 
             await page.waitForTimeout(2000)
+            // Usage example
+            await addPageNumbersToPDF(`pdfs/${fileName}/${fileName}.pdf`, "Main", fileName)
+                .then(() => {
+                    console.log('Page numbers added successfully!');
+                })
+                .catch((error) => {
+                    console.log('Error adding page numbers:', error);
+                });
             await removePage(fileName).catch((err) => console.log(err));
             await page.waitForTimeout(2000)
             // await page.close();
@@ -1200,38 +1261,7 @@ async function checkRemovePopups(page) {
     })
 }
 
-async function removePage(filePathOld, pageNumber) {
-    // const { writeFileSync, readFileSync } = require("fs");
-    // const { PDFDocument } = require("pdf-lib");
-    // const pdf = require('pdf-parse');
-
-    // const dataBuffer = await readFileSync(`pdfs/${filePath}/${filePath}${pageNumber ? pageNumber : ""}.pdf`);
-    // const letters = await PDFDocument.load(readFileSync(`pdfs/${filePath}/${filePath}${pageNumber ? pageNumber : ""}.pdf`));
-
-    // await pdf(dataBuffer).then(async function (data) {
-    //     const pages = data.text.split('\n\n'); // Split the text by page
-
-    //     var num = 1
-    //     for (let i = 0; i < pages.length; i++) {
-    //         // Get the text of the desired page
-    //         const desiredPageText = pages[i];
-
-    //         // console.log("desiredPageText =>", desiredPageText);
-
-
-    //         if (!desiredPageText && i !== 0) {
-    //             console.log(` `);
-    //             console.log(`Text of page ${num}:`);
-    //             console.log(desiredPageText);
-    //             await letters.removePage(i - num);
-    //             num = num + 1
-    //         }
-    //     }
-    //     await writeFileSync(`pdfs_test/${filePath}/${filePath}${pageNumber ? pageNumber : ""}.pdf`, await letters.save());
-    // }).catch(function (error) {
-    //     console.log('An error occurred:', error);
-    // });
-
+async function removePage(filePathOld) {
 
     const { writeFileSync, readFileSync, readdirSync } = require("fs");
     const { PDFDocument } = require("pdf-lib");
@@ -1285,4 +1315,117 @@ async function removePage(filePathOld, pageNumber) {
         }
     }
 }
+
+async function addPageNumbersToPDF(inputPath, profileName, website, pageTitle) {
+    const { PDFDocument, rgb, StandardFonts } = require('pdf-lib');
+    const fs = require('fs').promises;
+    const pdfDoc = await PDFDocument.load(await fs.readFile(inputPath));
+
+    const pages = pdfDoc.getPages();
+    const totalPages = pages.length;
+
+    const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+    for (let i = 0; i < totalPages; i++) {
+        const page = pages[i];
+
+        const { width, height } = page.getSize();
+        const fontSize = 8;
+
+        const currentDate = new Date().toLocaleDateString();
+        var currentTime = new Date().toLocaleTimeString([], { hour: 'numeric', minute: 'numeric', hour12: true });
+        currentTime = currentTime.split(" ")
+
+        currentTime[1] = currentTime[1].toUpperCase()
+
+        currentTime = currentTime.join(" ")
+
+        const pageText = `${profileName ? profileName : "none"} - ${pageTitle} ${i + 1} out of ${totalPages}`;
+        const websiteText = `${website}`
+        const dateTimeText = `${currentDate}, ${currentTime}`;
+
+        // Calculate text widths
+        const pageTextWidth = font.widthOfTextAtSize(pageText, fontSize);
+        const dateTimeTextWidth = font.widthOfTextAtSize(dateTimeText, fontSize);
+
+        // Add pageText in top right corner
+        page.drawText(pageText, {
+            x: width - pageTextWidth - 10,
+            y: height - 12,
+            size: fontSize,
+            color: rgb(0, 0, 0),
+            font: font,
+        });
+
+        // Add dateTimeText in bottom right corner
+        page.drawText(dateTimeText, {
+            x: width - dateTimeTextWidth - 10,
+            y: 6,
+            size: fontSize,
+            color: rgb(0, 0, 0),
+            font: font,
+        });
+
+        // Add websiteText in bottom left corner
+        page.drawText(websiteText, {
+            x: 10,
+            y: 6,
+            size: fontSize,
+            color: rgb(0, 0, 0),
+            font: font,
+        });
+    }
+
+    const modifiedPdfBytes = await pdfDoc.save();
+
+    await fs.writeFile(inputPath, modifiedPdfBytes);
+}
+
+
+// async function addPageNumbersToPDF(inputPath, profileName, website) {
+//     const { PDFDocument, rgb, StandardFonts } = require('pdf-lib');
+//     const fs = require('fs').promises;
+//     const pdfDoc = await PDFDocument.load(await fs.readFile(inputPath));
+
+//     const pages = pdfDoc.getPages();
+//     const totalPages = pages.length;
+
+//     const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+//     for (let i = 0; i < totalPages; i++) {
+//         const page = pages[i];
+
+//         const { width, height } = page.getSize();
+//         const fontSize = 8;
+//         const text = `${profileName ? profileName : "none"} ${website} ${i + 1} / ${totalPages}`;
+
+//         // Calculate text width
+//         const textWidth = font.widthOfTextAtSize(text, fontSize);
+
+//         // Add page number text
+//         page.drawText(text, {
+//             x: width - textWidth - 10,
+//             y: height - 12,
+//             size: fontSize,
+//             color: rgb(0, 0, 0),
+//             font: font,
+//         });
+//     }
+
+//     const modifiedPdfBytes = await pdfDoc.save();
+
+//     await fs.writeFile(inputPath, modifiedPdfBytes);
+// }
+
+// // Usage example
+// addPageNumbersToPDF('./pdfs/lakebrains.com/lakebrains.com.pdf', './pdfs/lakebrains.com/lakebrains.com.pdf')
+//     .then(() => {
+//         console.log('Page numbers added successfully!');
+//     })
+//     .catch((error) => {
+//         console.log('Error adding page numbers:', error);
+//     });
+
 // *************************************************************************************************************** */
+
+
