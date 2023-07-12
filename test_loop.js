@@ -1,4 +1,4 @@
-// 03-07-2023 old code with styles merge *************************************************************************************************************** */
+// 10-07-2023 header & footer every pdf, add styles from scripts *************************************************************************************************************** */
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const path = require('path');
@@ -125,7 +125,7 @@ async function run() {
     // ]
 
     // const allUrls = ["https://www.pixium-vision.com/board-of-directors-2/", "https://humbleandfume.com/", "https://www.brookfieldproperties.com/en/who-we-are/leadership.html", "https://www.i3verticals.com/leadership/", "https://investors.crocs.com/governance/management/default.aspx", "https://www.nexteraenergy.com/company/leadership.html/company.html", "https://www.ttec.com/about-us/executive-team", "https://www.eildoncapital.com/people/", "https://bluglass.com/our-people/", "https://traton.com/en/company/executive-board.html", "https://amagroupltd.com/our-business/ama-group-board/", "https://www.adorebeautygroup.com.au/investor-centre/?page=board-of-directors", "https://www.pixium-vision.com/2019/09/lloyd-diamond/", "https://ir.gatx.com/governance/management/default.aspx", "https://ir.essentgroup.com/governance/management/default.aspx", "https://investors.esabcorporation.com/governance/executive-management/default.aspx", "https://www.automationnth.com/about-us/#team", "https://www.advatix.com/team", "https://jrvrgroup.com/james-river-insurance/our-company/leadership", "https://newsroom.fiserv.com/corporate-information/executive-leadership", "https://www.idacorpinc.com/about-us/our-leadership/default.aspx", "https://www.iaai.com/marketing/ritchiebros-investor-relations", "https://catalystcr.com/our-people/", "https://ir.applied.com/governance/corporate-management/default.aspx", "https://datalix.eu/", "https://bonobos.com/", "https://lakebrains.com/", "https://www.tcs.com/", "https://www.infosys.com/", "https://www.hcltech.com/", "https://www.tata.com/", "https://www.larsentoubro.com/", "https://www.pwc.com/", "https://www.mphasis.com/home.html"]
-    const allUrls = ["https://lakebrains.com/"]
+    const allUrls = ["https://www.fedex.com/en-us/about/leadership.html"]
 
     for (let i = 0; i < allUrls.length; i++) {
         try {
@@ -165,7 +165,7 @@ async function run() {
             await page.setDefaultTimeout(0)
             await page.setDefaultNavigationTimeout(0)
 
-            await page.goto(URL, { waitUntil: "networkidle0", timeout: 0 });
+            await page.goto(URL, { timeout: 0 });
 
             await checkVideo(page)
 
@@ -173,7 +173,32 @@ async function run() {
 
             var pageNumber = 1
 
+            var title = "none"
+
+            await page.evaluate(async () => {
+                // Step 1: Select all elements containing dialog tags
+                const elementsWithDialogs = document.querySelectorAll('dialog');
+
+                // Step 2: Filter dialog tags with location in class attribute or inner HTML
+                const filteredDialogs = Array.from(elementsWithDialogs).filter(dialog => {
+                    const hasLocationInClass = dialog.classList.contains('location');
+                    const hasLocationInInnerHTML = dialog.innerHTML.includes('location');
+
+                    return hasLocationInClass || hasLocationInInnerHTML;
+                });
+
+                // Step 3: Output or manipulate the filtered dialog tags
+                filteredDialogs.forEach(dialog => {
+                    console.log("dialog =>", dialog);
+                    // Perform any desired operations with the filtered dialog tags
+                });
+
+            })
+
+
             async function test_pdfPage(profileName1, pageTitle) {
+
+                title = pageTitle
                 await page.emulateMediaType("screen");
                 await page.pdf({
                     path: `pdfs/${fileName}/${fileName}${pageNumber}.pdf`,
@@ -197,31 +222,31 @@ async function run() {
 
                 pageNumber = pageNumber + 1
 
-                await page.evaluate(async () => {
-                    // Get elements with attribute names or class names containing "close"
-                    const elementsWithCloseAttributes = Array.from(document.querySelectorAll('*')).filter(element => {
-                        const attributes = Array.from(element.attributes);
-                        const classNames = Array.from(element.classList);
-                        return (
-                            attributes.some(attribute => attribute.name.toLowerCase().includes('close')) ||
-                            classNames.some(className => className.toLowerCase().includes('close'))
-                        );
-                    });
+                // await page.evaluate(async () => {
+                //     // Get elements with attribute names or class names containing "close"
+                //     const elementsWithCloseAttributes = Array.from(document.querySelectorAll('*')).filter(element => {
+                //         const attributes = Array.from(element.attributes);
+                //         const classNames = Array.from(element.classList);
+                //         return (
+                //             attributes.some(attribute => attribute.name.toLowerCase().includes('close')) ||
+                //             classNames.some(className => className.toLowerCase().includes('close'))
+                //         );
+                //     });
 
-                    console.log("elementsWithCloseAttributes =>", elementsWithCloseAttributes);
+                //     console.log("elementsWithCloseAttributes =>", elementsWithCloseAttributes);
 
-                    setTimeout(() => {
-                        // Click on each element
-                        elementsWithCloseAttributes.forEach(closeElement => {
-                            const event = new MouseEvent('click', {
-                                bubbles: true,
-                                cancelable: true,
-                                view: window
-                            });
-                            closeElement.dispatchEvent(event);
-                        });
-                    }, 2000);
-                });
+                //     setTimeout(() => {
+                //         // Click on each element
+                //         elementsWithCloseAttributes.forEach(closeElement => {
+                //             const event = new MouseEvent('click', {
+                //                 bubbles: true,
+                //                 cancelable: true,
+                //                 view: window
+                //             });
+                //             closeElement.dispatchEvent(event);
+                //         });
+                //     }, 2000);
+                // });
 
 
 
@@ -257,7 +282,7 @@ async function run() {
                             !attributes.some(attr => attr !== "href" && element.getAttribute(attr).toLowerCase().includes("next")) &&
                             !attributes.some(attr => attr !== "href" && element.getAttribute(attr).toLowerCase().includes("previous")) &&
                             !attributes.some(attr => attr !== "href" && element.getAttribute(attr).toLowerCase().includes("nav"));
-                    });
+                    }).filter(element => !element.hasAttribute("onclick"));
 
                     if (pointerElementsWithoutHrefAncestors.length) {
                         for (let i = 0; i < pointerElementsWithoutHrefAncestors.length; i++) {
@@ -290,12 +315,36 @@ async function run() {
                                     // Start observing the document for attribute changes on elements
                                     await observer.observe(document, { attributes: true, subtree: true });
 
-                                    await test_pdfPage(profileName1, pageTitle);
 
                                     setTimeout(async () => {
+                                        await test_pdfPage(profileName1, pageTitle);
                                         console.log("profileName1 =>", profileName1);
                                         observer.disconnect()
-                                    }, 2000);
+                                    }, 5000);
+
+                                    // Get elements with attribute names or class names containing "close"
+                                    const elementsWithCloseAttributes = Array.from(document.querySelectorAll('*')).filter(element => {
+                                        const attributes = Array.from(element.attributes);
+                                        const classNames = Array.from(element.classList);
+                                        return (
+                                            attributes.some(attribute => attribute.name.toLowerCase().includes('close')) ||
+                                            classNames.some(className => className.toLowerCase().includes('close'))
+                                        );
+                                    }).filter(element => !element.hasAttribute("onclick"));
+
+                                    console.log("elementsWithCloseAttributes =>", elementsWithCloseAttributes);
+
+                                    setTimeout(() => {
+                                        // Click on each element
+                                        elementsWithCloseAttributes.forEach(closeElement => {
+                                            const event = new MouseEvent('click', {
+                                                bubbles: true,
+                                                cancelable: true,
+                                                view: window
+                                            });
+                                            closeElement.dispatchEvent(event);
+                                        });
+                                    }, 7000);
 
                                     if ((i + 1) === pointerElementsWithoutHrefAncestors.length) {
                                         setTimeout(() => {
@@ -345,7 +394,7 @@ async function run() {
                 let pageInternal = await browser.newPage();
                 try {
 
-                    await pageInternal.goto(link, { timeout: 0 });
+                    await pageInternal.goto(link, { timeout: 40000 });
                     console.log("Getting in");
 
                     await pageInternal.waitForTimeout(5000)
@@ -418,6 +467,47 @@ async function run() {
                 let scripts = document.querySelectorAll('script')
                 let headers = document.querySelectorAll('header')
                 let footers = document.querySelectorAll('footer')
+                var dialogs = document.querySelectorAll("dialog");
+                var figure = document.querySelectorAll("figure");
+
+                for (var i = 0; i < figure.length; i++) {
+                    var dialog = figure[i];
+                    var div = document.createElement("div");
+
+                    // Copy the dialog's content to the div
+                    div.innerHTML = dialog.innerHTML;
+
+                    // Preserve the dialog's attributes, classes, and styles on the div
+                    for (var j = 0; j < dialog.attributes.length; j++) {
+                        var attr = dialog.attributes[j];
+                        div.setAttribute(attr.name, attr.value);
+                    }
+                    div.className = dialog.className;
+                    div.style.cssText = dialog.style.cssText;
+
+                    // Replace the dialog with the div
+                    dialog.parentNode.replaceChild(div, dialog);
+                }
+
+                for (var i = 0; i < dialogs.length; i++) {
+                    var dialog = dialogs[i];
+                    var div = document.createElement("div");
+
+                    // Copy the dialog's content to the div
+                    div.innerHTML = dialog.innerHTML;
+
+                    // Preserve the dialog's attributes, classes, and styles on the div
+                    for (var j = 0; j < dialog.attributes.length; j++) {
+                        var attr = dialog.attributes[j];
+                        div.setAttribute(attr.name, attr.value);
+                    }
+                    div.className = dialog.className;
+                    div.style.cssText = dialog.style.cssText;
+
+                    // Replace the dialog with the div
+                    dialog.parentNode.replaceChild(div, dialog);
+                }
+
 
 
                 // Loop through each element
@@ -589,7 +679,7 @@ async function run() {
                 }
                 const buttons = document.querySelectorAll('button');
                 for (const button of buttons) {
-                    if (!button.querySelector('a') && (button.innerText.toLowerCase().includes("read more") || button.innerText.toLowerCase().includes("learn more") || button.innerText.toLowerCase().includes("more"))) {
+                    if (!button.querySelector('a') && (button.innerText.toLowerCase().includes("read more") || button.innerText.toLowerCase().includes("learn more") || button.innerText.toLowerCase().includes("more") || button.innerText.toLowerCase().includes("read full bio") || button.innerText.toLowerCase().includes("view profile") || button.innerText.toLowerCase().includes("biography"))) {
                         button.click();
                     }
                 }
@@ -601,13 +691,13 @@ async function run() {
                 for (const link of links) {
                     var bodyBaseURI = document.querySelector('body').baseURI.split("/")[2];
 
-                    if (!link.querySelector('a') && (link.innerText.toLowerCase().includes("read more") || link.innerText.toLowerCase().includes("learn more") || link.innerText.toLowerCase().includes("more"))) {
-                        if (link.getAttribute("href") && link.getAttribute("href").includes(bodyBaseURI.replace(/^(https?:\/\/)?(www\.)?/, '$1'))) {
+                    if (!link.querySelector('a') && (link.innerText.toLowerCase().includes("read more") || link.innerText.toLowerCase().includes("learn more") || link.innerText.toLowerCase().includes("more") || link.innerText.toLowerCase().includes("read full bio") || link.innerText.toLowerCase().includes("view profile") || link.innerText.toLowerCase().includes("biography"))) {
+                        console.log("links =>", link.href.includes(bodyBaseURI.replace(/^(https?:\/\/)?(www\.)?/, '$1')));
+                        if (link.getAttribute("href") && link.href.includes(bodyBaseURI.replace(/^(https?:\/\/)?(www\.)?/, '$1'))) {
                             const allLinksFilter = await allLinks.filter(items => items === link.getAttribute("href"));
-                            console.log("links =>", allLinksFilter);
                             if (!allLinksFilter.length) {
                                 console.log("link.getAttribute(href) =>", link.getAttribute("href"));
-                                var height = await test_newPage(link.getAttribute("href"))
+                                var height = await test_newPage(link.href)
 
                                 console.log("height =>", height);
 
@@ -856,12 +946,12 @@ async function run() {
                 printBackground: true,
                 displayHeaderFooter: false,
                 format: "A4",
-                scale: 0.3
+                scale: 0.5
             });
 
             await page.waitForTimeout(2000)
             // Usage example
-            await addPageNumbersToPDF(`pdfs/${fileName}/${fileName}.pdf`, "Main", fileName)
+            await addPageNumbersToPDF(`pdfs/${fileName}/${fileName}.pdf`, "Main", fileName, title)
                 .then(() => {
                     console.log('Page numbers added successfully!');
                 })
@@ -1381,51 +1471,4 @@ async function addPageNumbersToPDF(inputPath, profileName, website, pageTitle) {
     await fs.writeFile(inputPath, modifiedPdfBytes);
 }
 
-
-// async function addPageNumbersToPDF(inputPath, profileName, website) {
-//     const { PDFDocument, rgb, StandardFonts } = require('pdf-lib');
-//     const fs = require('fs').promises;
-//     const pdfDoc = await PDFDocument.load(await fs.readFile(inputPath));
-
-//     const pages = pdfDoc.getPages();
-//     const totalPages = pages.length;
-
-//     const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-
-//     for (let i = 0; i < totalPages; i++) {
-//         const page = pages[i];
-
-//         const { width, height } = page.getSize();
-//         const fontSize = 8;
-//         const text = `${profileName ? profileName : "none"} ${website} ${i + 1} / ${totalPages}`;
-
-//         // Calculate text width
-//         const textWidth = font.widthOfTextAtSize(text, fontSize);
-
-//         // Add page number text
-//         page.drawText(text, {
-//             x: width - textWidth - 10,
-//             y: height - 12,
-//             size: fontSize,
-//             color: rgb(0, 0, 0),
-//             font: font,
-//         });
-//     }
-
-//     const modifiedPdfBytes = await pdfDoc.save();
-
-//     await fs.writeFile(inputPath, modifiedPdfBytes);
-// }
-
-// // Usage example
-// addPageNumbersToPDF('./pdfs/lakebrains.com/lakebrains.com.pdf', './pdfs/lakebrains.com/lakebrains.com.pdf')
-//     .then(() => {
-//         console.log('Page numbers added successfully!');
-//     })
-//     .catch((error) => {
-//         console.log('Error adding page numbers:', error);
-//     });
-
 // *************************************************************************************************************** */
-
-
