@@ -125,7 +125,7 @@ async function run() {
     // ]
 
     // const allUrls = ["https://www.pixium-vision.com/board-of-directors-2/", "https://humbleandfume.com/", "https://www.brookfieldproperties.com/en/who-we-are/leadership.html", "https://www.i3verticals.com/leadership/", "https://investors.crocs.com/governance/management/default.aspx", "https://www.nexteraenergy.com/company/leadership.html/company.html", "https://www.ttec.com/about-us/executive-team", "https://www.eildoncapital.com/people/", "https://bluglass.com/our-people/", "https://traton.com/en/company/executive-board.html", "https://amagroupltd.com/our-business/ama-group-board/", "https://www.adorebeautygroup.com.au/investor-centre/?page=board-of-directors", "https://www.pixium-vision.com/2019/09/lloyd-diamond/", "https://ir.gatx.com/governance/management/default.aspx", "https://ir.essentgroup.com/governance/management/default.aspx", "https://investors.esabcorporation.com/governance/executive-management/default.aspx", "https://www.automationnth.com/about-us/#team", "https://www.advatix.com/team", "https://jrvrgroup.com/james-river-insurance/our-company/leadership", "https://newsroom.fiserv.com/corporate-information/executive-leadership", "https://www.idacorpinc.com/about-us/our-leadership/default.aspx", "https://www.iaai.com/marketing/ritchiebros-investor-relations", "https://catalystcr.com/our-people/", "https://ir.applied.com/governance/corporate-management/default.aspx", "https://datalix.eu/", "https://bonobos.com/", "https://lakebrains.com/", "https://www.tcs.com/", "https://www.infosys.com/", "https://www.hcltech.com/", "https://www.tata.com/", "https://www.larsentoubro.com/", "https://www.pwc.com/", "https://www.mphasis.com/home.html"]
-    const allUrls = ["https://www.fedex.com/en-us/about/leadership.html"]
+    const allUrls = ["https://www.factset.com/our-company/our-leadership"]
 
     for (let i = 0; i < allUrls.length; i++) {
         try {
@@ -790,7 +790,8 @@ async function run() {
                             for (const innerElement of elements) {
                                 for (var i = 0, atts = innerElement.attributes, n = atts.length, arr = []; i < n; i++) {
                                     if (atts[i].nodeValue.toLocaleLowerCase() === "next" || atts[i].nodeValue.toLocaleLowerCase() === "next page" || atts[i].nodeValue.toLocaleLowerCase() === "next-page") {
-                                        if (innerElement.href && !innerElement.href.toLocaleLowerCase().includes("https")) {
+                                        console.log("innerElement =>", atts[i].nodeValue);
+                                        if (innerElement.href && !innerElement.getAttribute("href").toLocaleLowerCase().includes("https")) {
                                             console.log("atts[i].nodeValue.toLocaleLowerCase() =>", innerElement.href.toLocaleLowerCase().includes("https"));
                                             var elementHrefData = async () => {
                                                 if (innerElement.tagName === "A" && !innerElement.getAttribute("href").includes("https")) {
@@ -841,7 +842,7 @@ async function run() {
                                                                     iframe.width = "100%";
                                                                     iframe.style.marginTop = "20px"
 
-                                                                    iframe.height = parent.offsetHeight + 200;
+                                                                    iframe.height = parent.offsetHeight + 1000;
                                                                     iframe.frameBorder = "0"
                                                                     iframe.scrolling = "no"
 
@@ -950,15 +951,16 @@ async function run() {
             });
 
             await page.waitForTimeout(2000)
+            await removePage(fileName).catch((err) => console.log(err));
+            await page.waitForTimeout(5000)
             // Usage example
-            await addPageNumbersToPDF(`pdfs/${fileName}/${fileName}.pdf`, "Main", fileName, title)
+            await addPageNumbersToPDF(`pdfs_test/${fileName}/${fileName}.pdf`, "Main", fileName, title)
                 .then(() => {
                     console.log('Page numbers added successfully!');
                 })
                 .catch((error) => {
                     console.log('Error adding page numbers:', error);
                 });
-            await removePage(fileName).catch((err) => console.log(err));
             await page.waitForTimeout(2000)
             // await page.close();
             console.log("Done");
